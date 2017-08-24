@@ -32,6 +32,11 @@ You can just run the script and...<br>
 `$ sh script_cheatsheet.sh -f .cheatsheet -r 'git commit --amend'`<br>
 ##### ...remove all commands from your cheatsheet
 `$ sh script_cheatsheet.sh -f .cheatsheet -r all`<br>
+Furthermore you can...
+##### ...check the usage/help
+`$ sh script_cheatsheet.sh -f .cheatsheet -h`<br>
+##### ...check the version
+`$ sh script_cheatsheet.sh -f .cheatsheet -v`<br>
 
 ## Hint
 For a better usage it would be most suitable to create an alias like<br>

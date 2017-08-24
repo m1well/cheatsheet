@@ -5,7 +5,7 @@
 #author          :Michael Wellner (@m1well) m1well.de
 #date            :20170824
 #version         :1.1.0
-#usage           :sh script_cheatsheet.sh -f .cheatsheet [-l|-a|-r|-v]
+#usage           :sh script_cheatsheet.sh -f .cheatsheet [-l|-a|-r|-h|-v]
 #notes           :it would be most suitable to create an alias
 ###
 
@@ -22,7 +22,7 @@ BACKGROUND_DEFAULT="\033[49m"
 line="//-----------------------------//"
 cheatsheet="//-------- cheatsheet  --------//"
 usage="//--- "
-usage1="//--- Usage: sh script_cheatsheet.sh [-f] [-l|-a|-r|-v]"
+usage1="//--- Usage: sh script_cheatsheet.sh [-f] [-l|-a|-r|-h|-v]"
 usage2="//---    -f filename    set the path to the cheatsheet file (this is mandatory!!)"
 usage3="//---    -l list        list your commands including this string (set param 'all' to list all commands)"
 usage4="//---    -a add         add a new command"
@@ -129,7 +129,7 @@ exit_script() {
 }
 
 ### check input opts ###
-while getopts ":a:f:l:r:hv" arg; do
+while getopts ":a:f:l:rhv" arg; do
    case $arg in
       a)
          add_param=${OPTARG}
@@ -161,33 +161,31 @@ print_start_of_cheatsheet
 if [ -n "${file_param}" ]; then
    if [ -n "${list_param}" ]; then
       # list mode
-      if [ "${list_param}" == "all" ]; then
-         if [ -f "${file_param}" ]; then
+      if [ -f "${file_param}" ]; then
+         if [ "${list_param}" == "all" ]; then
             print_success "list_all"
             cat "${file_param}"
          else
-           print_error "file_no_file"
-           print_usage
-           exit_script
+            print_success "list_grep"
+            grep --color=always "${list_param}" "${file_param}"
          fi
       else
-         print_success "list_grep"
-         grep --color=always "${list_param}" "${file_param}"
+        print_error "file_no_file"
+        print_usage
       fi
       exit_script
    elif [ -n "${add_param}" ]; then
       # add mode
       if grep -q "${add_param}" "${file_param}"; then
          print_error "add"
-         exit_script
       else
          echo "${add_param}" >> "${file_param}"
          # sort file instantly
          cat "${file_param}" | sort > "${file_param}".tmp
          mv "${file_param}".tmp "${file_param}"
          print_success "add"
-         exit_script
       fi
+      exit_script
    elif [ -n "${remove_param}" ]; then
       # remove mode
       if [ -f "${file_param}" ]; then
@@ -200,16 +198,14 @@ if [ -n "${file_param}" ]; then
                if [ "${removed}" == "${remove_param}" ]; then
                   print_success "remove_one"
                   grep -F -v "${remove_param}" "${file_param}" > "${file_param}".tmp && mv "${file_param}".tmp "${file_param}"
-                  exit_script
                else
                   print_error "remove"
-                  exit_script
                fi
             else
                print_error "remove"
-               exit_script
             fi
          fi
+         exit_script
       else
         print_error "file_no_file"
         print_usage
