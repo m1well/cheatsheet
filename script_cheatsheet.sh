@@ -4,7 +4,7 @@
 #description     :This script is a cheatsheet for e.g. git or docker commands.
 #author          :Michael Wellner (@m1well) m1well.de
 #date            :20170824
-#version         :1.2.0
+#version         :1.2.1
 #usage           :sh script_cheatsheet.sh [-l|-a|-r|-h|-v]
 #notes           :it would be most suitable to create an alias
 ###
@@ -40,7 +40,7 @@ add_error="error - following command is already in the cheatsheet"
 remove_one_success="successfully removed following command from the cheatsheet"
 remove_all_success="successfully removed all commands of the cheatsheet"
 remove_error="error - following command is not available in the cheatsheet"
-version1="version:    1.2.0"
+version1="version:    1.2.1"
 version2="author:     Michael Wellner (@m1well)"
 
 ### file ###

@@ -7,7 +7,8 @@ It acts a bit like aliases but only as a list of the commands you stored without
 I am now at the point where i often use commands like<br>
 `$ docker system prune -a` or `$ git reset --soft HEAD^`<br>
 and i don't want to google them if i need them ad hoc and don't memorize them in this moment.<br><br>
-Aliases are cool, but if i start working only with aliases and someone asks me "how can i reset my commit?" - of course i can't tell him my alias ;)
+Aliases are cool, but if i start working only with aliases and someone asks me "how can i reset my commit?" - of course i can't tell him my alias. ;)<br>
+The shell history is also cool, but a bit to long (even if you grep).<br>
 
 ## Solution
 A tool where i can store all my used shell commands, list them, add new commands and of course also delete commands.<br><br>
@@ -21,29 +22,33 @@ and i get an answer of my stored output:<br>
 `//-----------------------------//`<br>
 
 ## Usage
-You can just run the script and...<br>
-##### ...add a command to your cheatsheet
+##### You can just run the script and...<br>
+...add a command to your cheatsheet:<br>
 `$ sh script_cheatsheet.sh -a 'git commit --amend'`<br>
-##### ...show all commands in your cheatsheet
+...show all commands in your cheatsheet:<br>
 `$ sh script_cheatsheet.sh -l all`<br>
-##### ...show a specific command in your cheatsheet
+...show a specific command in your cheatsheet:<br>
 `$ sh script_cheatsheet.sh -l 'commit'`<br>
-##### ...remove a command from your cheatsheet
+...remove a command from your cheatsheet:<br>
 `$ sh script_cheatsheet.sh -r 'git commit --amend'`<br>
-##### ...remove all commands from your cheatsheet
+...remove all commands from your cheatsheet:<br>
 `$ sh script_cheatsheet.sh -r all`<br>
-Furthermore you can...
-##### ...check the usage/help
+##### Furthermore you can...<br>
+...check the usage/help:<br>
 `$ sh script_cheatsheet.sh -h`<br>
-##### ...check the version
+...check the version:<br>
 `$ sh script_cheatsheet.sh -v`<br>
 
 ## Hint
 For a better usage it would be most suitable to create an alias like<br>
-`alias cheat="sh [path-to-script]"`<br>
+`alias cheat="sh [path-to-script]/script_cheatsheet.sh"`<br>
 so that you can run the tool like this:<br>
 `$ cheat -l all`
 
+## P.S.
+The main reason for this project for me is just to learn more about the git/github behaviour, the versioning (like semver) and also to get some more scripting skills.<br>
+So if you have some interesting points, then let me know. :)<br>
+
 ## Copyright and License
-Copyright 2017 Michael Wellner ([@m1well](http://www.twitter.m1well.de))<br>
+Copyright (c) 2017 Michael Wellner ([@m1well](http://www.twitter.m1well.de))<br>
 Code released under the [MIT License](/LICENSE).<br>
