@@ -12,7 +12,7 @@ Aliases are cool, but if i start working only with aliases and someone asks me "
 ## Solution
 A tool where i can store all my used shell commands, list them, add new commands and of course also delete commands.<br><br>
 So if i search e.g. for a command to stop all docker container i search in my stored commands:<br>
-`sh script_cheatsheet.sh -f .cheatsheet -l 'docker stop'`<br>
+`$ sh script_cheatsheet.sh -f .cheatsheet -l 'docker stop'`<br>
 and i get an answer of my stored output:<br>
 `//-----------------------------//`<br>
 `//-------- cheatsheet  --------//`<br>
