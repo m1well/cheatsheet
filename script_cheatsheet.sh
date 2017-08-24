@@ -4,7 +4,7 @@
 #description     :This script is a cheatsheet for e.g. git or docker commands.
 #author          :Michael Wellner (@m1well) m1well.de
 #date            :20170824
-#version         :1.0.0
+#version         :1.1.0
 #usage           :sh script_cheatsheet.sh -f .cheatsheet [-l|-a|-r|-v]
 #notes           :it would be most suitable to create an alias
 ###
@@ -43,7 +43,7 @@ add_error="error - following command is already in the cheatsheet"
 remove_one_success="successfully removed following command from the cheatsheet"
 remove_all_success="successfully removed all commands of the cheatsheet"
 remove_error="error - following command is not available in the cheatsheet"
-version1="version:    1.0.0"
+version1="version:    1.1.0"
 version2="author:     Michael Wellner (@m1well)"
 ### functions ###
 print_parameters_for_dev() {
@@ -182,6 +182,9 @@ if [ -n "${file_param}" ]; then
          exit_script
       else
          echo "${add_param}" >> "${file_param}"
+         # sort file instantly
+         cat "${file_param}" | sort > "${file_param}".tmp
+         mv "${file_param}".tmp "${file_param}"
          print_success "add"
          exit_script
       fi
