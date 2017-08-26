@@ -4,7 +4,7 @@
 #description     :This script is a cheatsheet for e.g. git or docker commands.
 #author          :Michael Wellner (@m1well) m1well.de
 #date            :20170824
-#version         :1.2.1
+#version         :1.3.0
 #usage           :sh script_cheatsheet.sh [-l|-a|-r|-h|-v]
 #notes           :it would be most suitable to create an alias
 ###
@@ -31,95 +31,86 @@ usage6="//---    -v version     show version"
 usage7="//--- Hint:"
 usage8="//--- it would be most suitable to create an alias like \"alias cheat=\"sh [path-to-script] \"\""
 usage9="//--- so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
-file_error_no_file="error - no cheatsheet file available -> you have to add a first command to create the file"
-mode_error="error - no mode set"
-list_all_success="list of all commands:"
-list_grep_success="list of greped commands:"
-add_success="successfully added following command to the cheatsheet"
-add_error="error - following command is already in the cheatsheet"
-remove_one_success="successfully removed following command from the cheatsheet"
-remove_all_success="successfully removed all commands of the cheatsheet"
-remove_error="error - following command is not available in the cheatsheet"
-version1="version:    1.2.1"
+errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
+errorNoMode="error - no mode set"
+successListAll="list of all commands:"
+successListGrep="list of greped commands:"
+successAdd="successfully added following command to the cheatsheet"
+errorAdd="error - following command is already in the cheatsheet"
+successRemoveOne="successfully removed following command from the cheatsheet"
+successRemoveAll="successfully removed all commands of the cheatsheet"
+errorRemove="error - following command is not available in the cheatsheet"
+version1="version:    1.3.0"
 version2="author:     Michael Wellner (@m1well)"
 
 ### file ###
-file_param=~/.cheatsheet
+cheatsheetFile=~/.cheatsheet
 
-### functions ###
-print_parameters_for_dev() {
+### print functions ###
+printParametersForDev() {
    printf "${FONT_YELLOW}"
    printf "print parameters:${BR}"
-   printf "file: ${file_param}${BR}"
-   printf "list: ${list_param}${BR}"
-   printf "add: ${add_param}${BR}"
-   printf "remove: ${remove_param}${BR}"
+   printf "file: ${cheatsheetFile}${BR}"
+   printf "list: ${paramList}${BR}"
+   printf "add: ${paramAdd}${BR}"
+   printf "remove: ${paramRemove}${BR}"
    printf "${FONT_NONE}"
 }
-print_start_of_cheatsheet() {
+printStartLinesOfCheatsheet() {
    printf "${FONT_CYAN}"
    printf "${line}${BR}"
    printf "${cheatsheet}${BR}"
    printf "${FONT_NONE}"
 }
-print_usage() {
+printUsage() {
    printf "${FONT_CYAN}"
-   printf "${usage}${BR}"
-   printf "${usage1}${BR}"
-   printf "${usage2}${BR}"
-   printf "${usage3}${BR}"
-   printf "${usage4}${BR}"
-   printf "${usage5}${BR}"
-   printf "${usage6}${BR}"
-   printf "${usage}${BR}"
-   printf "${usage7}${BR}"
-   printf "${usage8}${BR}"
-   printf "${usage9}${BR}"
-   printf "${usage}${BR}"
+   printf "${usage}${BR}${usage1}${BR}${usage2}${BR}${usage3}${BR}"
+   printf "${usage4}${BR}${usage5}${BR}${usage6}${BR}${usage}${BR}"
+   printf "${usage7}${BR}${usage8}${BR}${usage9}${BR}${usage}${BR}"
    printf "${FONT_NONE}"
 }
-print_version() {
+printVersionInfo() {
    printf "${FONT_CYAN}"
    printf "${version1}${BR}"
    printf "${version2}${BR}"
    printf "${FONT_NONE}"
 }
-print_success() {
+printSuccess() {
    case $1 in
       "list_all")
-         printf "${FONT_GREEN}${list_all_success}${FONT_NONE}${BR}"
+         printf "${FONT_GREEN}${successListAll}${FONT_NONE}${BR}"
          ;;
       "list_grep")
-         printf "${FONT_GREEN}${list_grep_success}${BR}${FONT_NONE}"
+         printf "${FONT_GREEN}${successListGrep}${BR}${FONT_NONE}"
          ;;
       "add")
-         printf "${FONT_GREEN}${add_success}${BR}${FONT_NONE}${add_param}${BR}"
+         printf "${FONT_GREEN}${successAdd}${BR}${FONT_NONE}${paramAdd}${BR}"
          ;;
       "remove_all")
-         printf "${FONT_GREEN}${remove_all_success}${BR}${FONT_NONE}"
+         printf "${FONT_GREEN}${successRemoveAll}${BR}${FONT_NONE}"
          ;;
       "remove_one")
-         printf "${FONT_GREEN}${remove_one_success}${BR}${FONT_NONE}${remove_param}${BR}"
+         printf "${FONT_GREEN}${successRemoveOne}${BR}${FONT_NONE}${paramRemove}${BR}"
          ;;
    esac
 }
-print_error() {
+printError() {
    case $1 in
       "file_no_file")
-         printf "${BACKGROUND_RED}${file_error_no_file}${BACKGROUND_DEFAULT}${BR}"
+         printf "${BACKGROUND_RED}${errorNoFile}${BACKGROUND_DEFAULT}${BR}"
          ;;
       "mode")
-         printf "${BACKGROUND_RED}${mode_error}${BACKGROUND_DEFAULT}${BR}"
+         printf "${BACKGROUND_RED}${errorNoMode}${BACKGROUND_DEFAULT}${BR}"
          ;;
       "add")
-         printf "${BACKGROUND_RED}${add_error}${BACKGROUND_DEFAULT}${BR}${add_param}${BR}"
+         printf "${BACKGROUND_RED}${errorAdd}${BACKGROUND_DEFAULT}${BR}${paramAdd}${BR}"
          ;;
       "remove")
-         printf "${BACKGROUND_RED}${remove_error}${BACKGROUND_DEFAULT}${BR}${remove_param}${BR}"
+         printf "${BACKGROUND_RED}${errorRemove}${BACKGROUND_DEFAULT}${BR}${paramRemove}${BR}"
          ;;
    esac
 }
-exit_script() {
+exitScript() {
    printf "${FONT_CYAN}${line}${FONT_NONE}${BR}"
    exit 0
 }
@@ -128,89 +119,158 @@ exit_script() {
 while getopts ":a:l:r:hv" arg; do
    case $arg in
       a)
-         add_param=${OPTARG}
+         paramAdd=${OPTARG}
          ;;
       l)
-         list_param=${OPTARG}
+         paramList=${OPTARG}
          ;;
       r)
-         remove_param=${OPTARG}
+         paramRemove=${OPTARG}
          ;;
       v)
-         version_param="version"
+         paramVersion="version"
          ;;
       h | *)
-         print_usage
-         exit_script
+         printUsage
+         exitScript
    esac
 done
 
+### logical functions ###
+isListMode() {
+   if [ -n "${paramList}" ]; then
+      return 0
+	 else
+      return 1
+   fi
+}
+isAddMode() {
+   if [ -n "${paramAdd}" ]; then
+      return 0
+	 else
+      return 1
+   fi
+}
+isRemoveMode() {
+   if [ -n "${paramRemove}" ]; then
+      return 0
+	 else
+      return 1
+   fi
+}
+isVersionMode() {
+   if [ -n "${paramVersion}" ]; then
+      return 0
+	 else
+      return 1
+   fi
+}
+isFileExisting() {
+   if [ -e "${cheatsheetFile}" ]; then
+      return 0
+	 else
+      return 1
+   fi
+}
+isParamAll() {
+   if [ "${1}" == "all" ]; then
+      return 0
+	 else
+      return 1
+   fi
+}
+removeOneCommand() {
+   # move all non greped to a tmp file
+   grep -F -v "${1}" ${2} > ${2}.tmp
+	 # remove cheatsheet file
+	 rm ${2}
+	 if [[ $(wc -l < ${2}.tmp) > 0 ]]; then
+		  # change tempfile to new cheatsheet file
+		  mv "${2}".tmp "${2}"
+   else
+      # remove tempfile if it is epty
+      rm "${2}".tmp
+   fi
+}
+
 ### print parameters for dev ###
-# print_parameters_for_dev
+# printParametersForDev
 
 ### start of script ###
-print_start_of_cheatsheet
+printStartLinesOfCheatsheet
 
-if [ -n "${list_param}" ]; then
-   # list mode
-   if [ -e "${file_param}" ]; then
-      if [ "${list_param}" == "all" ]; then
-         print_success "list_all"
-         cat "${file_param}"
+### list mode
+if isListMode; then
+   if isFileExisting; then
+      if isParamAll "${paramList}"; then
+         printSuccess "list_all"
+         cat "${cheatsheetFile}"
       else
-         print_success "list_grep"
-         grep --color=always "${list_param}" "${file_param}"
+         printSuccess "list_grep"
+         grep --color=always "${paramList}" "${cheatsheetFile}"
       fi
    else
-      print_error "file_no_file"
-      print_usage
+      printError "file_no_file"
+      printUsage
    fi
-   exit_script
-elif [ -n "${add_param}" ]; then
-   # add mode
-   if grep -q "${add_param}" "${file_param}"; then
-      print_error "add"
-   else
-      echo "${add_param}" >> "${file_param}"
-      # sort file instantly
-      cat "${file_param}" | sort > "${file_param}".tmp
-      mv "${file_param}".tmp "${file_param}"
-      print_success "add"
-   fi
-   exit_script
-elif [ -n "${remove_param}" ]; then
-   # remove mode
-   if [ -e "${file_param}" ]; then
-      if [ "${remove_param}" == "all" ]; then
-         print_success "remove_all"
-         rm "${file_param}"
+   exitScript
+
+### add mode
+elif isAddMode; then
+	 if isFileExisting; then
+      if grep -q "${paramAdd}" "${cheatsheetFile}"; then
+         printError "add"
       else
-         if grep -q "${remove_param}" "${file_param}"; then
-            removed="$(grep "${remove_param}" "${file_param}")"
-            if [ "${removed}" == "${remove_param}" ]; then
-               print_success "remove_one"
-               grep -F -v "${remove_param}" "${file_param}" > "${file_param}".tmp && mv "${file_param}".tmp "${file_param}"
+		     # grep "${paramAdd}" "${cheatsheetFile}"
+         echo "${paramAdd}" >> "${cheatsheetFile}"
+         # sort file instantly
+         cat "${cheatsheetFile}" | sort > "${cheatsheetFile}".tmp
+         mv "${cheatsheetFile}".tmp "${cheatsheetFile}"
+         printSuccess "add"
+      fi
+   else
+      # no file available
+			echo "${paramAdd}" >> "${cheatsheetFile}"
+			printSuccess "add"
+   fi
+   exitScript
+
+### remove mode
+elif isRemoveMode; then
+   if isFileExisting; then
+      if isParamAll "${paramRemove}"; then
+         printSuccess "remove_all"
+         rm "${cheatsheetFile}"
+      else
+         if grep -q "${paramRemove}" "${cheatsheetFile}"; then
+            removed="$(grep "${paramRemove}" "${cheatsheetFile}")"
+            if [ "${removed}" == "${paramRemove}" ]; then
+               printSuccess "remove_one"
+               removeOneCommand "${paramRemove}" "${cheatsheetFile}"
             else
-               print_error "remove"
+               printError "remove"
             fi
          else
-            print_error "remove"
+            printError "remove"
          fi
       fi
-      exit_script
+      exitScript
    else
-      print_error "file_no_file"
-      print_usage
-      exit_script
+      printError "file_no_file"
+      printUsage
+      exitScript
    fi
-elif [ -n "${version_param}" ]; then
-   # version mode
-   print_version
-   exit_script
+
+### version mode
+elif isVersionMode; then
+   printVersionInfo
+   exitScript
+
+### no mode
 else
-   print_error "mode"
-   print_usage
-   exit_script
+   printError "mode"
+   printUsage
+   exitScript
 fi
 
 ### end of script ###
