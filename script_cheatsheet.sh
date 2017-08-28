@@ -1,12 +1,13 @@
 #!/bin/bash
 ###
-#title           :script_cheatsheet.sh
-#description     :This script is a cheatsheet for e.g. git or docker commands.
-#author          :Michael Wellner (@m1well) m1well.de
-#date            :20170824
-#version         :1.4.0
-#usage           :sh script_cheatsheet.sh [-l|-a|-r|-h|-v]
-#notes           :it would be most suitable to create an alias
+#title                  :script_cheatsheet.sh
+#description            :This script is a cheatsheet for e.g. git or docker commands or whatever.
+#author                 :Michael Wellner (@m1well) twitter.m1well.de
+#date of creation       :20170824
+#date of last change    :20170828
+#version                :1.4.0
+#usage                  :script_cheatsheet.sh [-l|-a|-r|-h|-v]
+#notes                  :it would be most suitable to create an alias
 ###
 
 ### colors ###
@@ -22,14 +23,14 @@ BACKGROUND_DEFAULT="\033[49m"
 line="//-----------------------------//"
 cheatsheet="//-------- cheatsheet  --------//"
 usage="//--- "
-usage1="//--- Usage: sh script_cheatsheet.sh [-l|-a|-r|-h|-v]"
+usage1="//--- Usage: script_cheatsheet.sh [-l|-a|-r|-h|-v]"
 usage2="//---    -l list        list your commands including this string (set param 'all' to list all commands)"
 usage3="//---    -a add         add a new command"
 usage4="//---    -r remove      remove a command (set param 'all' to remove all commands)"
 usage5="//---    -h help        show help"
 usage6="//---    -v version     show version"
 usage7="//--- Hint:"
-usage8="//--- it would be most suitable to create an alias like \"alias cheat=\"sh [path-to-script] \"\""
+usage8="//--- it would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
 usage9="//--- so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
 errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
 errorNoMode="error - no mode set"
@@ -40,8 +41,9 @@ errorAdd="error - following command is already in the cheatsheet"
 successRemoveOne="successfully removed following command from the cheatsheet"
 successRemoveAll="successfully removed all commands of the cheatsheet"
 errorRemove="error - following command is not available in the cheatsheet"
-version1="version:    1.4.0"
-version2="author:     Michael Wellner (@m1well)"
+version1="version:                 1.4.0"
+version2="date of last change:     20170828"
+version3="author:                  Michael Wellner (@m1well)"
 
 ### file ###
 cheatsheetFile=~/.cheatsheet
@@ -73,6 +75,7 @@ printVersionInfo() {
    printf "${FONT_CYAN}"
    printf "${version1}${BR}"
    printf "${version2}${BR}"
+	 printf "${version3}${BR}"
    printf "${FONT_NONE}"
 }
 printSuccess() {
