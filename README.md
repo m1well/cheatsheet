@@ -52,6 +52,7 @@ so that you can run the tool like this:<br>
 
 ## TODO
 * add release branch :heavy_check_mark:
+* add "logging" to show more output of the script (to learn more about scripting) :heavy_check_mark:
 * fix add/remove function (only grep of existing commands is here not the right solution)
 * add posibility to make comments and also search for them (e.g: 'git commit --amend // changes the last commit')
 * add posibility to execute commands or copy them from the list to the command line

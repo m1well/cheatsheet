@@ -4,11 +4,14 @@
 #description            :This script is a cheatsheet for e.g. git or docker commands or whatever.
 #author                 :Michael Wellner (@m1well) twitter.m1well.de
 #date of creation       :20170824
-#date of last change    :20170828
+#date of last change    :20170829
 #version                :1.5.0
 #usage                  :script_cheatsheet.sh [-a|-l|-r|-b|-h|-v]
 #notes                  :it would be most suitable to create an alias
 ###
+
+### logging ###
+LOGGING=false
 
 ### colors ###
 BR="\n"
@@ -31,7 +34,7 @@ usage5="//---    -b backup [param]     backup your cheatsheet to a given folder"
 usage6="//---    -h help               show help"
 usage7="//---    -v version            show version"
 hint1="//--- Hint:"
-hint1="//--- it would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
+hint2="//--- it would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
 hint3="//--- so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
 errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
 errorNoMode="error - no mode set"
@@ -44,21 +47,23 @@ successRemoveAll="successfully removed all commands of the cheatsheet"
 errorRemove="error - following command is not available in the cheatsheet"
 successBackup="successfully created backup of the cheatsheet"
 version1="version:                 1.5.0"
-version2="date of last change:     20170828"
+version2="date of last change:     20170829"
 version3="author:                  Michael Wellner (@m1well)"
 
 ### file ###
 cheatsheetFile=~/.cheatsheet
 
 ### print functions ###
-printParametersForDev() {
-   printf "${FONT_YELLOW}"
-   printf "print parameters:${BR}"
-   printf "file: ${cheatsheetFile}${BR}"
-   printf "list: ${paramList}${BR}"
-   printf "add: ${paramAdd}${BR}"
-   printf "remove: ${paramRemove}${BR}"
-   printf "${FONT_NONE}"
+printInputParameters() {
+   if $LOGGING; then
+      printf "${FONT_YELLOW}"
+      printf "//--------------- print input parameters:${BR}"
+      printf "//--------------- file: ${cheatsheetFile}${BR}"
+      printf "//--------------- list: ${paramList}${BR}"
+      printf "//--------------- add: ${paramAdd}${BR}"
+      printf "//--------------- remove: ${paramRemove}${BR}"
+      printf "${FONT_NONE}"
+   fi
 }
 printStartLinesOfCheatsheet() {
    printf "${FONT_CYAN}"
@@ -125,6 +130,13 @@ exitScript() {
    printf "${FONT_CYAN}${line}${FONT_NONE}${BR}"
    exit 0
 }
+logParameter() {
+	 if $LOGGING; then
+      printf "${FONT_YELLOW}"
+      printf "//--------------- ${2}: ${1}${BR}"
+      printf "${FONT_NONE}"
+   fi
+}
 
 ### check input opts ###
 # [-a|-l|-r|-b|-h|-v]
@@ -146,6 +158,7 @@ while getopts ":a:l:r:b:hv" arg; do
          paramVersion="version"
          ;;
       h | *)
+			   printStartLinesOfCheatsheet
          printUsage
          exitScript
    esac
@@ -229,8 +242,8 @@ removeOneCommand() {
    fi
 }
 
-### print parameters for dev ###
-# printParametersForDev
+### print input parameters for development ###
+printInputParameters
 
 ### start of script ###
 printStartLinesOfCheatsheet
