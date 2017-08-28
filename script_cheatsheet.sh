@@ -4,7 +4,7 @@
 #description     :This script is a cheatsheet for e.g. git or docker commands.
 #author          :Michael Wellner (@m1well) m1well.de
 #date            :20170824
-#version         :1.3.0
+#version         :1.4.0
 #usage           :sh script_cheatsheet.sh [-l|-a|-r|-h|-v]
 #notes           :it would be most suitable to create an alias
 ###
@@ -40,7 +40,7 @@ errorAdd="error - following command is already in the cheatsheet"
 successRemoveOne="successfully removed following command from the cheatsheet"
 successRemoveAll="successfully removed all commands of the cheatsheet"
 errorRemove="error - following command is not available in the cheatsheet"
-version1="version:    1.3.0"
+version1="version:    1.4.0"
 version2="author:     Michael Wellner (@m1well)"
 
 ### file ###
@@ -179,6 +179,20 @@ isParamAll() {
       return 1
    fi
 }
+isStringEqual() {
+   if [ "${1}" == "${2}" ]; then
+			return 0
+   else
+      return 1
+   fi
+}
+isGrepedStringInFile() {
+   if grep -q "${1}" "${2}"; then
+      return 0
+   else
+      return 1
+   fi
+}
 removeOneCommand() {
    # move all non greped to a tmp file
    grep -F -v "${1}" ${2} > ${2}.tmp
@@ -210,6 +224,7 @@ if isListMode; then
          grep --color=always "${paramList}" "${cheatsheetFile}"
       fi
    else
+		  # no file available
       printError "file_no_file"
       printUsage
    fi
@@ -218,10 +233,9 @@ if isListMode; then
 ### add mode
 elif isAddMode; then
 	 if isFileExisting; then
-      if grep -q "${paramAdd}" "${cheatsheetFile}"; then
+      if isGrepedStringInFile "${paramAdd}" "${cheatsheetFile}"; then
          printError "add"
       else
-		     # grep "${paramAdd}" "${cheatsheetFile}"
          echo "${paramAdd}" >> "${cheatsheetFile}"
          # sort file instantly
          cat "${cheatsheetFile}" | sort > "${cheatsheetFile}".tmp
@@ -239,12 +253,12 @@ elif isAddMode; then
 elif isRemoveMode; then
    if isFileExisting; then
       if isParamAll "${paramRemove}"; then
-         printSuccess "remove_all"
          rm "${cheatsheetFile}"
+				 printSuccess "remove_all"
       else
-         if grep -q "${paramRemove}" "${cheatsheetFile}"; then
+         if isGrepedStringInFile "${paramRemove}" "${cheatsheetFile}"; then
             removed="$(grep "${paramRemove}" "${cheatsheetFile}")"
-            if [ "${removed}" == "${paramRemove}" ]; then
+            if isStringEqual "${removed}" "${paramRemove}"; then
                printSuccess "remove_one"
                removeOneCommand "${paramRemove}" "${cheatsheetFile}"
             else
@@ -254,12 +268,12 @@ elif isRemoveMode; then
             printError "remove"
          fi
       fi
-      exitScript
    else
+		  # no file available
       printError "file_no_file"
       printUsage
-      exitScript
    fi
+	 exitScript
 
 ### version mode
 elif isVersionMode; then
