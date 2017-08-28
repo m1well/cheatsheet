@@ -1,5 +1,9 @@
 ### macOS
 .DS_Store
 
-### dev file
+### dev files
 .dev
+.test
+
+### backup file
+.cheatsheet
