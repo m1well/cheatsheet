@@ -5,8 +5,8 @@
 #author                 :Michael Wellner (@m1well) twitter.m1well.de
 #date of creation       :20170824
 #date of last change    :20170828
-#version                :1.4.0
-#usage                  :script_cheatsheet.sh [-l|-a|-r|-h|-v]
+#version                :1.5.0
+#usage                  :script_cheatsheet.sh [-a|-l|-r|-b|-h|-v]
 #notes                  :it would be most suitable to create an alias
 ###
 
@@ -22,16 +22,17 @@ BACKGROUND_DEFAULT="\033[49m"
 ### output lines ###
 line="//-----------------------------//"
 cheatsheet="//-------- cheatsheet  --------//"
-usage="//--- "
-usage1="//--- Usage: script_cheatsheet.sh [-l|-a|-r|-h|-v]"
-usage2="//---    -l list        list your commands including this string (set param 'all' to list all commands)"
-usage3="//---    -a add         add a new command"
-usage4="//---    -r remove      remove a command (set param 'all' to remove all commands)"
-usage5="//---    -h help        show help"
-usage6="//---    -v version     show version"
-usage7="//--- Hint:"
-usage8="//--- it would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
-usage9="//--- so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
+usageLine="//--- "
+usage1="//--- Usage: script_cheatsheet.sh [-a|-l|-r|-b|-h|-v]"
+usage2="//---    -a add [param]        add a new command"
+usage3="//---    -l list [param]       list your commands including this string (set param 'all' to list all commands)"
+usage4="//---    -r remove [param]     remove a command (set param 'all' to remove all commands)"
+usage5="//---    -b backup [param]     backup your cheatsheet to a given folder"
+usage6="//---    -h help               show help"
+usage7="//---    -v version            show version"
+hint1="//--- Hint:"
+hint1="//--- it would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
+hint3="//--- so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
 errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
 errorNoMode="error - no mode set"
 successListAll="list of all commands:"
@@ -41,7 +42,8 @@ errorAdd="error - following command is already in the cheatsheet"
 successRemoveOne="successfully removed following command from the cheatsheet"
 successRemoveAll="successfully removed all commands of the cheatsheet"
 errorRemove="error - following command is not available in the cheatsheet"
-version1="version:                 1.4.0"
+successBackup="successfully created backup of the cheatsheet"
+version1="version:                 1.5.0"
 version2="date of last change:     20170828"
 version3="author:                  Michael Wellner (@m1well)"
 
@@ -66,9 +68,12 @@ printStartLinesOfCheatsheet() {
 }
 printUsage() {
    printf "${FONT_CYAN}"
-   printf "${usage}${BR}${usage1}${BR}${usage2}${BR}${usage3}${BR}"
-   printf "${usage4}${BR}${usage5}${BR}${usage6}${BR}${usage}${BR}"
-   printf "${usage7}${BR}${usage8}${BR}${usage9}${BR}${usage}${BR}"
+   printf "${usageLine}${BR}"
+	 printf "${usage1}${BR}${usage2}${BR}${usage3}${BR}${usage4}${BR}"
+   printf "${usage5}${BR}${usage6}${BR}${usage7}${BR}"
+	 printf "${usageLine}${BR}"
+   printf "${hint1}${BR}${hint2}${BR}${hint3}"
+	 printf "${usageLine}${BR}"
    printf "${FONT_NONE}"
 }
 printVersionInfo() {
@@ -80,14 +85,14 @@ printVersionInfo() {
 }
 printSuccess() {
    case $1 in
+		 "add")
+				printf "${FONT_GREEN}${successAdd}${BR}${FONT_NONE}${paramAdd}${BR}"
+				;;
       "list_all")
          printf "${FONT_GREEN}${successListAll}${FONT_NONE}${BR}"
          ;;
       "list_grep")
          printf "${FONT_GREEN}${successListGrep}${BR}${FONT_NONE}"
-         ;;
-      "add")
-         printf "${FONT_GREEN}${successAdd}${BR}${FONT_NONE}${paramAdd}${BR}"
          ;;
       "remove_all")
          printf "${FONT_GREEN}${successRemoveAll}${BR}${FONT_NONE}"
@@ -95,6 +100,9 @@ printSuccess() {
       "remove_one")
          printf "${FONT_GREEN}${successRemoveOne}${BR}${FONT_NONE}${paramRemove}${BR}"
          ;;
+			"backup")
+	       printf "${FONT_GREEN}${successBackup}${BR}${FONT_NONE}"
+	       ;;
    esac
 }
 printError() {
@@ -119,17 +127,21 @@ exitScript() {
 }
 
 ### check input opts ###
-while getopts ":a:l:r:hv" arg; do
+# [-a|-l|-r|-b|-h|-v]
+while getopts ":a:l:r:b:hv" arg; do
    case $arg in
-      a)
-         paramAdd=${OPTARG}
-         ;;
-      l)
-         paramList=${OPTARG}
-         ;;
+			a)
+	       paramAdd=${OPTARG}
+	       ;;
+			l)
+	       paramList=${OPTARG}
+	       ;;
       r)
          paramRemove=${OPTARG}
          ;;
+		  b)
+	       paramBackup=${OPTARG}
+	       ;;
       v)
          paramVersion="version"
          ;;
@@ -156,6 +168,13 @@ isAddMode() {
 }
 isRemoveMode() {
    if [ -n "${paramRemove}" ]; then
+      return 0
+	 else
+      return 1
+   fi
+}
+isBackupMode() {
+   if [ -n "${paramBackup}" ]; then
       return 0
 	 else
       return 1
@@ -277,6 +296,12 @@ elif isRemoveMode; then
       printUsage
    fi
 	 exitScript
+
+### backup mode
+elif isBackupMode; then
+   cp ${cheatsheetFile} ${paramBackup}
+	 printSuccess "backup"
+   exitScript
 
 ### version mode
 elif isVersionMode; then
