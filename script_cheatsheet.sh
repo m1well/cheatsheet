@@ -10,6 +10,9 @@
 #notes                  :it would be most suitable to create an alias
 ###
 
+### logging ###
+LOGGING=false
+
 ### colors ###
 BR="\n"
 FONT_CYAN="\033[0;96m"
@@ -51,14 +54,16 @@ version3="author:                  Michael Wellner (@m1well)"
 cheatsheetFile=~/.cheatsheet
 
 ### print functions ###
-printParametersForDev() {
-   printf "${FONT_YELLOW}"
-   printf "print parameters:${BR}"
-   printf "file: ${cheatsheetFile}${BR}"
-   printf "list: ${paramList}${BR}"
-   printf "add: ${paramAdd}${BR}"
-   printf "remove: ${paramRemove}${BR}"
-   printf "${FONT_NONE}"
+printInputParameters() {
+   if $LOGGING; then
+      printf "${FONT_YELLOW}"
+      printf "//--------------- print input parameters:${BR}"
+      printf "//--------------- file: ${cheatsheetFile}${BR}"
+      printf "//--------------- list: ${paramList}${BR}"
+      printf "//--------------- add: ${paramAdd}${BR}"
+      printf "//--------------- remove: ${paramRemove}${BR}"
+      printf "${FONT_NONE}"
+   fi
 }
 printStartLinesOfCheatsheet() {
    printf "${FONT_CYAN}"
@@ -124,6 +129,13 @@ printError() {
 exitScript() {
    printf "${FONT_CYAN}${line}${FONT_NONE}${BR}"
    exit 0
+}
+logParameter() {
+	 if $LOGGING; then
+      printf "${FONT_YELLOW}"
+      printf "//--------------- logged parameter: ${1}${BR}"
+      printf "${FONT_NONE}"
+   fi
 }
 
 ### check input opts ###
@@ -229,8 +241,8 @@ removeOneCommand() {
    fi
 }
 
-### print parameters for dev ###
-# printParametersForDev
+### print input parameters for development ###
+printInputParameters
 
 ### start of script ###
 printStartLinesOfCheatsheet
