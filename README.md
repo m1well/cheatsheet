@@ -2,8 +2,6 @@
 
 This is a tool to create a own cheatsheet for shell commands.
 It acts a bit like aliases and shell history but only as a list of the commands you stored (actually) without an execution.
-> latest release version: 1.4.0<br>
-> actual develop version: 1.5.0<br>
 
 ## Problem
 I am now at the point where i often use commands like<br>
@@ -24,7 +22,7 @@ and i get an answer of my stored output:<br>
 `//-----------------------------//`<br>
 
 ## Usage
-##### script_cheatsheet.sh [-a|-l|-r|-b|-h|-v]
+##### script_cheatsheet.sh [-a|-l|-r|-b|-i|-h|-v]
 ##### You can just run the script and...<br>
 ...add a command to your cheatsheet:<br>
 `$ script_cheatsheet.sh -a 'git commit --amend'`<br>
@@ -39,6 +37,8 @@ and i get an answer of my stored output:<br>
 ##### Furthermore you can...<br>
 ...backup the cheatsheet:<br>
 `$ script_cheatsheet.sh -b '[path-for-backup]'`<br>
+...import commands from a cheatsheet backup:<br>
+`$ script_cheatsheet.sh -i '[path-to-backup]/.cheatsheet'`<br>
 ...check the usage/help:<br>
 `$ script_cheatsheet.sh -h`<br>
 ...check the version:<br>
@@ -57,7 +57,7 @@ so that you can run the tool like this:<br>
 * add posibility to make comments and also search for them (e.g: 'git commit --amend // changes the last commit')
 * add posibility to execute commands or copy them from the list to the command line
 * add a backup function for the cheatsheet :heavy_check_mark:
-* add a import function to import an existing cheatsheet (rows from an existing cheatsheet)
+* add a import function to import an existing cheatsheet (rows from an existing cheatsheet) :heavy_check_mark:
 * add another script for "automated tests"<br>
 
 ## P.S.
