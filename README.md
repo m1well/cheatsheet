@@ -22,10 +22,11 @@ and i get an answer of my stored output:<br>
 `//-----------------------------//`<br>
 
 ## Usage
+##### script_cheatsheet.sh [-a|-l|-r|-b|-i|-h|-v]
 ##### You can just run the script and...<br>
 ...add a command to your cheatsheet:<br>
 `$ script_cheatsheet.sh -a 'git commit --amend'`<br>
-...show all commands in your cheatsheet:<br>
+...list all commands in your cheatsheet:<br>
 `$ script_cheatsheet.sh -l all`<br>
 ...show a specific command in your cheatsheet:<br>
 `$ script_cheatsheet.sh -l 'commit'`<br>
@@ -34,6 +35,10 @@ and i get an answer of my stored output:<br>
 ...remove all commands from your cheatsheet:<br>
 `$ script_cheatsheet.sh -r all`<br>
 ##### Furthermore you can...<br>
+...backup the cheatsheet:<br>
+`$ script_cheatsheet.sh -b '[path-for-backup]'`<br>
+...import commands from a cheatsheet backup:<br>
+`$ script_cheatsheet.sh -i '[path-to-backup]/.cheatsheet'`<br>
 ...check the usage/help:<br>
 `$ script_cheatsheet.sh -h`<br>
 ...check the version:<br>
@@ -47,10 +52,12 @@ so that you can run the tool like this:<br>
 
 ## TODO
 * add release branch :heavy_check_mark:
+* add "logging" to show more output of the script (to learn more about scripting) :heavy_check_mark:
+* fix add/remove function (only grep of existing commands is here not the right solution)
 * add posibility to make comments and also search for them (e.g: 'git commit --amend // changes the last commit')
 * add posibility to execute commands or copy them from the list to the command line
-* add a backup function for the cheatsheet
-* add a import function to import an existing cheatsheet (rows from an existing cheatsheet)
+* add a backup function for the cheatsheet :heavy_check_mark:
+* add a import function to import an existing cheatsheet (rows from an existing cheatsheet) :heavy_check_mark:
 * add another script for "automated tests"<br>
 
 ## P.S.
