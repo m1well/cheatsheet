@@ -22,7 +22,7 @@ and i get an answer of my stored output:<br>
 `//-----------------------------//`<br>
 
 ## Usage
-##### script_cheatsheet.sh [-a|-l|-r|-b|-i|-h|-v]
+#### script_cheatsheet.sh [-a|-l|-r|-b|-i|-h|-v]
 ##### You can just run the script and...<br>
 ...add a command to your cheatsheet:<br>
 `$ script_cheatsheet.sh -a 'git commit --amend'`<br>
@@ -44,21 +44,34 @@ and i get an answer of my stored output:<br>
 ...check the version:<br>
 `$ script_cheatsheet.sh -v`<br>
 
+## Environment Info
+##### unix
+I am not so familiar with all different unix shells, but i think u can use it with all standard shells<br>
+##### windows
+For windows i take the gitBash shell to use the cheatsheet<br>
+
 ## Hint
 For a better usage it would be most suitable to create an alias like<br>
 `alias cheat="[path-to-script]/script_cheatsheet.sh"`<br>
 so that you can run the tool like this:<br>
 `$ cheat -l all`<br>
 
+## Contribution
+You are welcome to contribute this project! Please follow the standard rules.<br>
+If you find a bug or have an idea for improvement, then please firstly open an issue.<br>
+If you are creating a Pull Request, please update the version in the script - and use [SemVer](http://semver.org).<br>
+Thank you.<br>
+
 ## TODO
 * add release branch :heavy_check_mark:
 * add "logging" to show more output of the script (to learn more about scripting) :heavy_check_mark:
-* fix add/remove function (only grep of existing commands is here not the right solution)
-* add posibility to make comments and also search for them (e.g: 'git commit --amend // changes the last commit')
 * add posibility to execute commands or copy them from the list to the command line
 * add a backup function for the cheatsheet :heavy_check_mark:
 * add a import function to import an existing cheatsheet (rows from an existing cheatsheet) :heavy_check_mark:
 * add another script for "automated tests"<br>
+* add posibility to make comments and also search for them
+  * e.g: 'git commit --amend // changes the last commit'
+  * but there could be problems with `grep`
 
 ## P.S.
 The main reason for this project for me is just to learn more about the git/github behaviour, the versioning (like semver) and also to get some more scripting skills.<br>
