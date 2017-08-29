@@ -5,7 +5,7 @@
 #author                 :Michael Wellner (@m1well) twitter.m1well.de
 #date of creation       :20170824
 #date of last change    :20170829
-#version                :1.6.1
+#version                :1.5.1
 #usage                  :script_cheatsheet.sh [-a|-l|-r|-b|-i|-h|-v]
 #notes                  :it would be most suitable to create an alias
 ###
@@ -48,7 +48,7 @@ successRemoveAll="successfully removed all commands of the cheatsheet"
 errorRemove="error - following command is not available in the cheatsheet"
 successBackup="successfully created backup of the cheatsheet"
 successImport="successfully imported following amount of commands from the cheatsheet backup"
-version1="version:                 1.6.1"
+version1="version:                 1.5.1"
 version2="date of last change:     20170829"
 version3="author:                  Michael Wellner (@m1well)"
 
