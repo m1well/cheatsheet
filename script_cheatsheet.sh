@@ -153,7 +153,8 @@ while getopts ":a:l:e:r:b:i:hv" arg ; do
          # check if there is another command after the linenumber
          if echo "${OPTARG}" | grep -q "," ; then
             paramExecute1=$(echo ${OPTARG} | cut -d ',' -f 1)
-            paramExecute2=$(echo ${OPTARG} | cut -d ',' -f 2)
+						paramExecute2="${OPTARG:${#paramExecute1}+1:${#OPTARG}-1}"
+						printf "${paramExecute2}"
          else
             paramExecute1=${OPTARG}
             paramExecute2="null"
@@ -248,7 +249,11 @@ printGreppedList() {
       for ln in "${greppedList}" ; do
          # split the line to number and command
          number=$(echo ${ln} | cut -d ':' -f 1)
-         command=$(echo ${ln} | cut -d ':' -f 2)
+         if (( ${number} < 10 )) ; then
+            command="${ln:2:${#ln}-1}"
+         else
+            command="${ln:3:${#ln}-1}"
+         fi
          printWithFormattedLineNumbers "${number}" "${command}"
       done
    done
