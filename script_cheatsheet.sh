@@ -23,19 +23,21 @@ BACKGROUND_DEFAULT="\033[49m"
 line="//-----------------------------//"
 cheatsheet="//-------- cheatsheet  --------//"
 usageLine="//--- "
+usageDescription="//--- Store your commands to a cheatsheet and find & execute them easily"
 usageReadme="//--- Please checkout the README.md file!"
 usage1="//--- Usage: script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]"
 usage2="//---    -a add [param]          add a new command"
 usage3="//---    -l list [param]         list your commands including this string - set param 'all' to list all commands"
-usage4="//---    -e execute [param]      execute a command by linenumber - it's possible to add another parameter (one word) after a comma which follows your command"
+usage4="//---    -e execute [param]      execute a command by linenumber - it's possible to add another parameter with apostrophes after a comma"
 usage5="//---    -r remove [param]       remove a command by linenumber - set param 'all' to remove all commands"
 usage6="//---    -b backup [param]       backup your cheatsheet to a given directory"
 usage7="//---    -i import [param]       import from a cheatsheet backup from a given directory"
 usage8="//---    -h help                 show help"
 usage9="//---    -v version              show version"
 hint1="//--- Hint:"
-hint2="//--- it would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
-hint3="//--- so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
+hint2="//--- Tt would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
+hint3="//--- -> so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
+hint4="//--- Don't use a '-' at first character to search a command (becaus grep think it is a new option) and to add a command"
 successListAll="list of all commands (with line number)"
 successListGrep="list of greped commands (with line number)"
 successAdd="successfully added following command to the cheatsheet"
@@ -64,12 +66,13 @@ printStartLinesOfCheatsheet() {
 printUsage() {
    printf "${FONT_CYAN}"
    printf "${usageLine}${BR}"
+   printf "${usageDescription}${BR}"
    printf "${usageReadme}${BR}"
    printf "${usageLine}${BR}"
    printf "${usage1}${BR}${usage2}${BR}${usage3}${BR}${usage4}${BR}"
    printf "${usage5}${BR}${usage6}${BR}${usage7}${BR}"
    printf "${usageLine}${BR}"
-   printf "${hint1}${BR}${hint2}${BR}${hint3}"
+   printf "${hint1}${BR}${hint2}${BR}${hint3}${BR}${hint4}${BR}"
    printf "${usageLine}${BR}"
    printf "${FONT_NONE}"
 }
@@ -214,7 +217,7 @@ isStringEqual() {
    return 1
 }
 isStringInFile() {
-   if grep -q "${1}" "${2}" ; then return 0 ; fi
+   if grep -Fx -q "${1}" "${2}" ; then return 0 ; fi
    return 1
 }
 addOneCommand() {
