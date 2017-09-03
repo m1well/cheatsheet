@@ -1,7 +1,8 @@
 # cheatsheet
 
 This is a tool to create a own cheatsheet for shell commands.
-It acts a bit like aliases and shell history but only as a list of the commands you stored (actually) without an execution.
+It acts a bit like aliases and shell history -> a list of commands you stored with execution.
+
 
 ## Problem
 I am now at the point where i often use commands like<br>
@@ -9,40 +10,111 @@ I am now at the point where i often use commands like<br>
 and i don't want to google them if i need them ad hoc and don't memorize them in this moment.<br><br>
 Aliases are cool, but if i start working only with aliases and someone asks me "how can i reset my commit?" - of course i can't tell him my alias. ;)<br>
 The shell history is also cool, but a bit to long (even if you grep).<br>
+So therefore i was thinking about to combine these functions into one tool.<br>
+
 
 ## Solution
-A tool where i can store all my used shell commands, list them, add new commands and of course also delete commands.<br><br>
-So if i search e.g. for a command to stop all docker container i search in my stored commands:<br>
-`$ script_cheatsheet.sh -l 'docker stop'`<br>
+<pre>
+A tool where i can store all my recently used shell commands, list them,
+execute them, add new commands and of course also delete them.
+</pre>
+So if i am looking e.g. for a command to stop all docker container i search in my stored commands:
+`$ script_cheatsheet.sh -l docker stop`
 and i get an answer of my stored output:<br>
-`//-----------------------------//`<br>
-`//-------- cheatsheet  --------//`<br>
-`list of greped commands:`<br>
-`docker stop $(docker ps -a -q)`<br>
-`//-----------------------------//`<br>
+<pre>
+//-----------------------------//
+//-------- cheatsheet  --------//
+list of greped commands (with line number)
+01: docker stop $(docker ps -a -q)
+//-----------------------------//</pre>
 
 ## Usage
-#### script_cheatsheet.sh [-a|-l|-r|-b|-i|-h|-v]
-##### You can just run the script and...<br>
-...add a command to your cheatsheet:<br>
-`$ script_cheatsheet.sh -a 'git commit --amend'`<br>
-...list all commands in your cheatsheet:<br>
+#### script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]
+lets say we actually have following cheatsheet (the commands are simple just to understand the principles):
+<pre>
+//-----------------------------//
+//-------- cheatsheet  --------//
+list of all commands (with line number)
+01:  git add .
+02:  git commit -m "{1}"
+03:  git push origin --force-with-lease
+//-----------------------------//</pre>
+
+#### You can just run the script and...<br>
+
+##### ...add a command to your cheatsheet:<br>
+`$ script_cheatsheet.sh -a 'git status'`<br>
+the result would be the same list as above with an additional line for `git status`:<br>
+<pre>
+01:  git add .
+02:  git commit -m "{1}"
+03:  git push origin --force-with-lease
+04:  git status
+</pre>
+
+##### ...list all commands in your cheatsheet:<br>
 `$ script_cheatsheet.sh -l all`<br>
-...show a specific command in your cheatsheet:<br>
+this would be the same result as the starting list plus the new `git status` command<br>
+
+##### ...show/grep a specific command in your cheatsheet:<br>
 `$ script_cheatsheet.sh -l 'commit'`<br>
-...remove a command from your cheatsheet:<br>
-`$ script_cheatsheet.sh -r 'git commit --amend'`<br>
-...remove all commands from your cheatsheet:<br>
+result would be:<br>
+<pre>
+//-----------------------------//
+//-------- cheatsheet  --------//
+list of greped commands (with line number)
+02:  git commit -m "{1}"
+//-----------------------------//
+</pre>
+
+##### ...execute a command by linenumber:<br>
+`$ script_cheatsheet.sh -e 4`<br>
+The fourth command `git status` is going to be executed (and shows the status of your current git repo).<br>
+
+##### ...execute a command by linenumber with one additional parameter:<br>
+`$ script_cheatsheet.sh -e 2,'this is a message for my commit'`<br>
+Then the third command `git commit -m "{1}"` is going to be executed.<br>
+Here the additional parameter enables you to put an individual message to the commit.<br>
+The result would be the following lines (with the additional output of the execution)<br>
+<pre>
+//-----------------------------//
+//-------- cheatsheet  --------//
+successfully executed the command:
+git commit -m "this is a message for my commit"
+//-----------------------------//
+[execution-function 31abc5b] this is a message for my commit
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+</pre>
+
+##### ...remove a command by linenumber from your cheatsheet:<br>
+`$ script_cheatsheet.sh -r 1`<br>
+the result would be following:<br>
+<pre>
+//-----------------------------//
+//-------- cheatsheet  --------//
+successfully removed following command from the cheatsheet
+git add .
+//-----------------------------//
+</pre>
+
+##### ...remove all commands from your cheatsheet:<br>
 `$ script_cheatsheet.sh -r all`<br>
-##### Furthermore you can...<br>
-...backup the cheatsheet:<br>
-`$ script_cheatsheet.sh -b '[path-for-backup]'`<br>
-...import commands from a cheatsheet backup:<br>
-`$ script_cheatsheet.sh -i '[path-to-backup]/.cheatsheet'`<br>
-...check the usage/help:<br>
+This deletes the whole cheatsheet file.<br>
+
+#### Furthermore you can...<br>
+
+##### ...backup the cheatsheet:
+`$ script_cheatsheet.sh -b '[path-for-backup]'`
+
+##### ...import commands from a cheatsheet backup:<br>
+`$ script_cheatsheet.sh -i '[path-to-backup]'`<br>
+
+##### ...check the usage/help:<br>
 `$ script_cheatsheet.sh -h`<br>
-...check the version:<br>
+
+##### ...check the version:<br>
 `$ script_cheatsheet.sh -v`<br>
+
 
 ## Environment Info
 ##### unix
@@ -50,32 +122,36 @@ I am not so familiar with all different unix shells, but i think u can use it wi
 ##### windows
 For windows i take the gitBash shell to use the cheatsheet<br>
 
+
 ## Hint
 For a better usage it would be most suitable to create an alias like<br>
 `alias cheat="[path-to-script]/script_cheatsheet.sh"`<br>
 so that you can run the tool like this:<br>
 `$ cheat -l all`<br>
 
+
 ## Contribution
 You are welcome to contribute this project! Please follow the standard rules.<br>
 If you find a bug or have an idea for improvement, then please firstly open an issue.<br>
-If you are creating a Pull Request, please update the version in the script - and use [SemVer](http://semver.org).<br>
+If you are creating a Pull Request, please update the version & date of last change in the script - and use [SemVer](http://semver.org).<br>
+Also please take care to indent with 3 spaces.<br>
 Thank you.<br>
 
+
 ## TODO
-* add release branch :heavy_check_mark:
-* add "logging" to show more output of the script (to learn more about scripting) :heavy_check_mark:
-* add posibility to execute commands or copy them from the list to the command line
-* add a backup function for the cheatsheet :heavy_check_mark:
-* add a import function to import an existing cheatsheet (rows from an existing cheatsheet) :heavy_check_mark:
+* add release branch :heavy_check_mark:<br>
+* add posibility to execute commands :heavy_check_mark:<br>
+* add a backup function for the cheatsheet :heavy_check_mark:<br>
+* add a import function to import an existing cheatsheet (rows from an existing cheatsheet) :heavy_check_mark:<br>
+* improve the export/import to work with different lists<br>
 * add another script for "automated tests"<br>
-* add posibility to make comments and also search for them
-  * e.g: 'git commit --amend // changes the last commit'
-  * but there could be problems with `grep`
+* add posibility to make comments and also search for them (e.g: 'git commit --amend // changes the last commit')<br>
+
 
 ## P.S.
 The main reason for this project for me is just to learn more about the git/github behaviour, the versioning (like semver) and also to get some more scripting skills.<br>
 So if you have some interesting points, then let me know. :)<br>
+
 
 ## Copyright and License
 Copyright :copyright: 2017 Michael Wellner ([@m1well](http://www.twitter.m1well.de))<br>
