@@ -1,7 +1,10 @@
 # cheatsheet
 
-This is a tool to create a own cheatsheet for shell commands.
-It acts a bit like aliases and shell history -> a list of commands you stored with execution.
+This is a tool to create a own cheatsheet for shell commands.<br>
+It acts a bit like aliases and shell history -> a list of commands you stored with execution.<br>
+<br>
+Take a quick look at my dotfiles to see how my acutal public .cheatsheet file looks like.<br>
+source: [.cheatsheet](https://github.com/m1well/dotfiles/blob/master/.cheatsheet)<br>
 
 
 ## Problem

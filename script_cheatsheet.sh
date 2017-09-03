@@ -116,7 +116,8 @@ printSuccess() {
 }
 printSuccessOfExection() {
    printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}"
-   echo "${1}" | sed -e "s/{1}/${2}/g"
+   local escaped=$(echo "${2}" | sed 's/\//\\\//g')
+   echo "${1}" | sed -e "s/{1}/${escaped}/g"
 }
 printError() {
    case $1 in
@@ -154,7 +155,6 @@ while getopts ":a:l:e:r:b:i:hv" arg ; do
          if echo "${OPTARG}" | grep -q "," ; then
             paramExecute1=$(echo ${OPTARG} | cut -d ',' -f 1)
 						paramExecute2="${OPTARG:${#paramExecute1}+1:${#OPTARG}-1}"
-						printf "${paramExecute2}"
          else
             paramExecute1=${OPTARG}
             paramExecute2="null"
@@ -286,7 +286,8 @@ executeOneCommand() {
 }
 executeTwoCommands() {
    printf "${FONT_CYAN}${line}${BR}${FONT_NONE}"
-   local cmd=$(echo "${1}" | sed -e "s/{1}/${2}/g")
+   local escaped=$(echo "${2}" | sed 's/\//\\\//g')
+   local cmd=$(echo "${1}" | sed -e "s/{1}/${escaped}/g")
    eval "${cmd}"
    exit 0
 }
