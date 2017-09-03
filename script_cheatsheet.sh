@@ -4,16 +4,13 @@
 #description            :This script is a cheatsheet for e.g. git or docker commands or whatever.
 #author                 :Michael Wellner (@m1well) twitter.m1well.de
 #date of creation       :20170824
-#date of last change    :20170829
-#version                :1.5.1
-#usage                  :script_cheatsheet.sh [-a|-l|-r|-b|-i|-h|-v]
+#date of last change    :20170903
+#version                :2.0.0
+#usage                  :script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]
 #notes                  :it would be most suitable to create an alias
 ###
 
-### logging ###
-LOGGING=false
-
-### colors ###
+### colors and linebreak ###
 BR="\n"
 FONT_CYAN="\033[0;96m"
 FONT_GREEN="\033[0;92m"
@@ -26,47 +23,38 @@ BACKGROUND_DEFAULT="\033[49m"
 line="//-----------------------------//"
 cheatsheet="//-------- cheatsheet  --------//"
 usageLine="//--- "
-usage1="//--- Usage: script_cheatsheet.sh [-a|-l|-r|-b|-i|-h|-v]"
-usage2="//---    -a add [param]        add a new command"
-usage3="//---    -l list [param]       list your commands including this string (set param 'all' to list all commands)"
-usage4="//---    -r remove [param]     remove a command (set param 'all' to remove all commands)"
-usage5="//---    -b backup [param]     backup your cheatsheet to a given folder"
-usage5="//---    -i import [param]     import from a cheatsheet backup from a given folder"
-usage6="//---    -h help               show help"
-usage7="//---    -v version            show version"
+usageReadme="//--- Please checkout the README.md file!"
+usage1="//--- Usage: script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]"
+usage2="//---    -a add [param]          add a new command"
+usage3="//---    -l list [param]         list your commands including this string - set param 'all' to list all commands"
+usage4="//---    -e execute [param]      execute a command by linenumber - it's possible to add another parameter (one word) after a comma which follows your command"
+usage5="//---    -r remove [param]       remove a command by linenumber - set param 'all' to remove all commands"
+usage6="//---    -b backup [param]       backup your cheatsheet to a given directory"
+usage7="//---    -i import [param]       import from a cheatsheet backup from a given directory"
+usage8="//---    -h help                 show help"
+usage9="//---    -v version              show version"
 hint1="//--- Hint:"
 hint2="//--- it would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
 hint3="//--- so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
-errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
-errorNoMode="error - no mode set"
-successListAll="list of all commands"
-successListGrep="list of greped commands"
+successListAll="list of all commands (with line number)"
+successListGrep="list of greped commands (with line number)"
 successAdd="successfully added following command to the cheatsheet"
-errorAdd="error - following command is already in the cheatsheet"
 successRemoveOne="successfully removed following command from the cheatsheet"
 successRemoveAll="successfully removed all commands of the cheatsheet"
-errorRemove="error - following command is not available in the cheatsheet"
 successBackup="successfully created backup of the cheatsheet"
 successImport="successfully imported following amount of commands from the cheatsheet backup"
-version1="version:                 1.5.1"
-version2="date of last change:     20170829"
+successExecute="successfully executed the command: "
+errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
+errorNoMode="error - no mode set"
+errorAdd="error - following command is already in the cheatsheet"
+errorRemove="error - this line is not available - cheatsheet has only "
+version1="version:                 2.0.0"
+version2="date of last change:     20170902"
 version3="author:                  Michael Wellner (@m1well)"
 
 ### file ###
 cheatsheetFile=~/.cheatsheet
 
-### print functions ###
-printInputParameters() {
-   if $LOGGING; then
-      printf "${FONT_YELLOW}"
-      printf "//--------------- print input parameters:${BR}"
-      printf "//--------------- file: ${cheatsheetFile}${BR}"
-      printf "//--------------- list: ${paramList}${BR}"
-      printf "//--------------- add: ${paramAdd}${BR}"
-      printf "//--------------- remove: ${paramRemove}${BR}"
-      printf "${FONT_NONE}"
-   fi
-}
 printStartLinesOfCheatsheet() {
    printf "${FONT_CYAN}"
    printf "${line}${BR}"
@@ -75,6 +63,8 @@ printStartLinesOfCheatsheet() {
 }
 printUsage() {
    printf "${FONT_CYAN}"
+   printf "${usageLine}${BR}"
+   printf "${usageReadme}${BR}"
    printf "${usageLine}${BR}"
    printf "${usage1}${BR}${usage2}${BR}${usage3}${BR}${usage4}${BR}"
    printf "${usage5}${BR}${usage6}${BR}${usage7}${BR}"
@@ -101,11 +91,17 @@ printSuccess() {
       "list_grep")
          printf "${FONT_GREEN}${successListGrep}${BR}${FONT_NONE}"
          ;;
+      "execute1")
+         printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}$ ${2}${BR}"
+         ;;
+      "execute2")
+         printSuccessOfExection "${2}" "${3}"
+         ;;
       "remove_all")
          printf "${FONT_GREEN}${successRemoveAll}${BR}${FONT_NONE}"
          ;;
       "remove_one")
-         printf "${FONT_GREEN}${successRemoveOne}${BR}${FONT_NONE}${paramRemove}${BR}"
+         printf "${FONT_GREEN}${successRemoveOne}${BR}${FONT_NONE}${2}${BR}"
          ;;
       "backup")
          printf "${FONT_GREEN}${successBackup}${BR}${FONT_NONE}"
@@ -114,6 +110,10 @@ printSuccess() {
          printf "${FONT_GREEN}${successImport}${BR}${FONT_NONE}${2}${BR}"
          ;;
    esac
+}
+printSuccessOfExection() {
+   printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}"
+   echo "${1}" | sed -e "s/{1}/${2}/g"
 }
 printError() {
    case $1 in
@@ -127,7 +127,7 @@ printError() {
          printf "${BACKGROUND_RED}${errorAdd}${BACKGROUND_DEFAULT}${BR}${paramAdd}${BR}"
          ;;
       "remove")
-         printf "${BACKGROUND_RED}${errorRemove}${BACKGROUND_DEFAULT}${BR}${paramRemove}${BR}"
+         printf "${BACKGROUND_RED}${errorRemove}${2} lines${BACKGROUND_DEFAULT}${BR}"
          ;;
    esac
 }
@@ -135,23 +135,26 @@ exitScript() {
    printf "${FONT_CYAN}${line}${FONT_NONE}${BR}"
    exit 0
 }
-logParameter() {
-   if $LOGGING; then
-      printf "${FONT_YELLOW}"
-      printf "//--------------- ${2}: ${1}${BR}"
-      printf "${FONT_NONE}"
-   fi
-}
 
 ### check input opts ###
-# [-a|-l|-r|-b|-i|-h|-v]
-while getopts ":a:l:r:b:i:hv" arg; do
+# [-a|-l|-e|-r|-b|-i|-h|-v]
+while getopts ":a:l:e:r:b:i:hv" arg ; do
    case $arg in
       a)
          paramAdd=${OPTARG}
          ;;
       l)
          paramList=${OPTARG}
+         ;;
+      e)
+         # check if there is another command after the linenumber
+         if echo "${OPTARG}" | grep -q "," ; then
+            paramExecute1=$(echo ${OPTARG} | cut -d ',' -f 1)
+            paramExecute2=$(echo ${OPTARG} | cut -d ',' -f 2)
+         else
+            paramExecute1=${OPTARG}
+            paramExecute2="null"
+         fi
          ;;
       r)
          paramRemove=${OPTARG}
@@ -171,90 +174,62 @@ while getopts ":a:l:r:b:i:hv" arg; do
          exitScript
    esac
 done
+shift $((OPTIND -1))
 
 ### logical functions ###
-isListMode() {
-   if [ -n "${paramList}" ]; then
-      return 0
-   else
-      return 1
-   fi
-}
 isAddMode() {
-   if [ -n "${paramAdd}" ]; then
-      return 0
-   else
-      return 1
-   fi
+   if [ -n "${paramAdd}" ] ; then return 0 ; fi
+   return 1
+}
+isListMode() {
+   if [ -n "${paramList}" ] ; then return 0 ; fi
+   return 1
+}
+isExecuteMode() {
+   if [ -n "${paramExecute1}" ] ; then return 0 ; fi
+   return 1
 }
 isRemoveMode() {
-   if [ -n "${paramRemove}" ]; then
-      return 0
-   else
-      return 1
-   fi
+   if [ -n "${paramRemove}" ] ; then return 0 ; fi
+   return 1
 }
 isBackupMode() {
-   if [ -n "${paramBackup}" ]; then
-      return 0
-   else
-      return 1
-   fi
+   if [ -n "${paramBackup}" ] ; then return 0 ; fi
+   return 1
 }
 isImportMode() {
-   if [ -n "${paramImport}" ]; then
-      return 0
-   else
-      return 1
-   fi
+   if [ -n "${paramImport}" ] ; then return 0 ; fi
+   return 1
 }
 isVersionMode() {
-   if [ -n "${paramVersion}" ]; then
-      return 0
-   else
-      return 1
-   fi
+   if [ -n "${paramVersion}" ] ; then return 0 ; fi
+   return 1
 }
 isFileExisting() {
-   if [ -e "${cheatsheetFile}" ]; then
-      return 0
-   else
-      return 1
-   fi
-}
-isParamAll() {
-   if [ "${1}" == "all" ]; then
-      return 0
-   else
-      return 1
-   fi
+   if [ -e "${cheatsheetFile}" ] ; then return 0 ; fi
+   return 1
 }
 isStringEqual() {
-   if [ "${1}" == "${2}" ]; then
-      return 0
-   else
-      return 1
-   fi
+   if [ "${1}" == "${2}" ] ; then return 0 ; fi
+   return 1
 }
 isStringInFile() {
-   if grep -q -x "${1}" "${2}"; then
-      return 0
-   else
-      return 1
-   fi
+   if grep -q "${1}" "${2}" ; then return 0 ; fi
+   return 1
 }
 addOneCommand() {
+   # add it to the file
    echo "${1}" >> "${2}"
    # sort file instantly
    cat "${2}" | sort > "${2}".tmp
    mv "${2}".tmp "${2}"
 }
 removeOneCommand() {
-   # move all non greped to a tmp file
-   grep -F -v "${1}" ${2} > ${2}.tmp
+   # move all other commands to a tmp file
+   sed "${1}d" "${2}" > ${2}.tmp
    # remove cheatsheet file
    rm ${2}
-   if [[ $(wc -l < ${2}.tmp) > 0 ]]; then
+   if [[ -s "${2}".tmp ]] ; then
       # change tempfile to new cheatsheet file
       mv "${2}".tmp "${2}"
    else
@@ -262,22 +237,81 @@ removeOneCommand() {
       rm "${2}".tmp
    fi
 }
+printGreppedList() {
+   local number=""
+   local command=""
+   # grep complete list and itereate over this list
+   grep -n --color=always "${1}" "${2}" | while read -r greppedList ; do
+      for ln in "${greppedList}" ; do
+         # split the line to number and command
+         number=$(echo ${ln} | cut -d ':' -f 1)
+         command=$(echo ${ln} | cut -d ':' -f 2)
+         printWithFormattedLineNumbers "${number}" "${command}"
+      done
+   done
+}
+printCompleteList() {
+   local counter=0
+   while read -r completeList ; do
+      for ln in "${completeList}" ; do
+         ((counter++))
+         printWithFormattedLineNumbers "${counter}" "${ln}"
+      done
+   done < "${1}"
+}
+printWithFormattedLineNumbers() {
+   local number=""
+   local command="${2}"
+   # if number smaller then 10 - add a leading zero
+   if (( ${1} < 10 )) ; then
+      number="0${1}"
+   else
+      number="${1}"
+   fi
+   # print out the formatted lines
+   echo "${number}:  ${command}"
+}
+executeOneCommand() {
+   printf "${FONT_CYAN}${line}${BR}${FONT_NONE}"
+   eval "${1}"
+   exit 0
+}
+executeTwoCommands() {
+   printf "${FONT_CYAN}${line}${BR}${FONT_NONE}"
+   local cmd=$(echo "${1}" | sed -e "s/{1}/${2}/g")
+   eval "${cmd}"
+   exit 0
+}
 
-### print input parameters for development ###
-printInputParameters
-
+#######################
 ### start of script ###
 printStartLinesOfCheatsheet
 
+### add mode
+if isAddMode ; then
+   if isFileExisting ; then
+      if isStringInFile "${paramAdd}" "${cheatsheetFile}" ; then
+         printError "add"
+      else
+         addOneCommand "${paramAdd}" "${cheatsheetFile}"
+         printSuccess "add"
+      fi
+   else
+      # no file available
+      addOneCommand "${paramAdd}" "${cheatsheetFile}"
+      printSuccess "add"
+   fi
+   exitScript
+
 ### list mode
-if isListMode; then
-   if isFileExisting; then
-      if isParamAll "${paramList}"; then
+elif isListMode ; then
+   if isFileExisting ; then
+      if isStringEqual "${paramList}" "all" ; then
          printSuccess "list_all"
-         cat "${cheatsheetFile}"
+         printCompleteList "${cheatsheetFile}"
       else
          printSuccess "list_grep"
-         grep --color=always "${paramList}" "${cheatsheetFile}"
+         printGreppedList "${paramList}" "${cheatsheetFile}"
       fi
    else
       # no file available
@@ -286,34 +320,38 @@ if isListMode; then
    fi
    exitScript
 
-### add mode
-elif isAddMode; then
-   if isFileExisting; then
-      if isStringInFile "${paramAdd}" "${cheatsheetFile}"; then
-         printError "add"
+### execute mode
+elif isExecuteMode ; then
+   if isFileExisting ; then
+      exec1=$(sed -n "${paramExecute1}"p "${cheatsheetFile}")
+      if !(isStringEqual "${paramExecute2}" "null") ; then
+         exec2=${paramExecute2}
+         printSuccess "execute2" "${exec1}" "${exec2}"
+         executeTwoCommands "${exec1}" "${exec2}"
       else
-         addOneCommand "${paramAdd}" "${cheatsheetFile}"
-         printSuccess "add"
+         printSuccess "execute1" "${exec1}"
+         executeOneCommand "${exec1}"
       fi
    else
       # no file available
-      echo "${paramAdd}" >> "${cheatsheetFile}"
-      printSuccess "add"
+      printError "file_no_file"
+      printUsage
+      exitScript
    fi
-   exitScript
 
 ### remove mode
-elif isRemoveMode; then
-   if isFileExisting; then
-      if isParamAll "${paramRemove}"; then
+elif isRemoveMode ; then
+   if isFileExisting ; then
+      if isStringEqual "${paramRemove}" "all" ; then
          rm "${cheatsheetFile}"
          printSuccess "remove_all"
       else
-         if isStringInFile "${paramRemove}" "${cheatsheetFile}"; then
+         countedLines=$(sed -n '$=' "${cheatsheetFile}")
+         if (( ${paramRemove} <= ${countedLines} )) ; then
+            printSuccess "remove_one" "$(sed -n "${paramRemove}"p "${cheatsheetFile}")"
             removeOneCommand "${paramRemove}" "${cheatsheetFile}"
-            printSuccess "remove_one"
          else
-            printError "remove"
+            printError "remove" "${countedLines}"
          fi
       fi
    else
@@ -324,35 +362,32 @@ elif isRemoveMode; then
    exitScript
 
 ### backup mode
-elif isBackupMode; then
-   cp ${cheatsheetFile} ${paramBackup}
+elif isBackupMode ; then
+   cp "${cheatsheetFile}" "${paramBackup}"
    printSuccess "backup"
    exitScript
 
 ### import mode
-elif isImportMode; then
+elif isImportMode ; then
    i=0
-   while read fileLine
-   do
-      if isFileExisting; then
-         if !(isStringInFile "$fileLine" "${cheatsheetFile}"); then
+   while read importFileLine ; do
+      if isFileExisting ; then
+         if !(isStringInFile "${importFileLine}" "${cheatsheetFile}") ; then
             # if command is not in the file then import it
-            addOneCommand "$fileLine" "${cheatsheetFile}"
+            addOneCommand "${importFileLine}" "${cheatsheetFile}"
             i=$((i+1))
-            logParameter "$fileLine" "input command ${i}"
          fi
       else
          # if file is not existing then import the command
-         addOneCommand "$fileLine" "${cheatsheetFile}"
+         addOneCommand "${importFileLine}" "${cheatsheetFile}"
          i=$((i+1))
-         logParameter "$fileLine" "input command ${i}"
       fi
    done < "${paramImport}"
    printSuccess "import" "${i}"
    exitScript
 
 ### version mode
-elif isVersionMode; then
+elif isVersionMode ; then
    printVersionInfo
    exitScript
 
@@ -364,3 +399,4 @@ else
 fi
 
 ### end of script ###
+#####################
