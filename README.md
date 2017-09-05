@@ -127,6 +127,8 @@ For windows i take the gitBash shell to use the cheatsheet<br>
 
 
 ## Hint
+Actually backslashes in commands are not allowed!! (due to bad display of them)<br>
+Don't use a '-' at first character to search a command! (becaus grep think it is a new option) and to add a command.<br>
 For a better usage it would be most suitable to create an alias like<br>
 `alias cheat="[path-to-script]/script_cheatsheet.sh"`<br>
 so that you can run the tool like this:<br>
