@@ -4,8 +4,8 @@
 #description            :This script is a cheatsheet for e.g. git or docker commands or whatever.
 #author                 :Michael Wellner (@m1well) twitter.m1well.de
 #date of creation       :20170824
-#date of last change    :20170903
-#version                :2.0.0
+#date of last change    :20170905
+#version                :2.0.1
 #usage                  :script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]
 #notes                  :it would be most suitable to create an alias
 ###
@@ -45,13 +45,13 @@ successRemoveOne="successfully removed following command from the cheatsheet"
 successRemoveAll="successfully removed all commands of the cheatsheet"
 successBackup="successfully created backup of the cheatsheet"
 successImport="successfully imported following amount of commands from the cheatsheet backup"
-successExecute="successfully executed the command: "
+successExecute="successfully executed the command"
 errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
 errorNoMode="error - no mode set"
-errorAdd="error - following command is already in the cheatsheet"
+errorAdd="error - this command exists already in the cheatsheet"
 errorRemove="error - this line is not available - cheatsheet has only "
-version1="version:                 2.0.0"
-version2="date of last change:     20170902"
+version1="version:                 2.0.1"
+version2="date of last change:     20170905"
 version3="author:                  Michael Wellner (@m1well)"
 
 ### file ###
@@ -86,16 +86,18 @@ printVersionInfo() {
 printSuccess() {
    case $1 in
       "add")
-         printf "${FONT_GREEN}${successAdd}${BR}${FONT_NONE}${paramAdd}${BR}"
+         printf "${FONT_GREEN}${successAdd}${BR}${FONT_NONE}"
+         echo "${paramAdd}"
          ;;
       "list_all")
-         printf "${FONT_GREEN}${successListAll}${FONT_NONE}${BR}"
+         printf "${FONT_GREEN}${successListAll}${BR}${FONT_NONE}"
          ;;
       "list_grep")
          printf "${FONT_GREEN}${successListGrep}${BR}${FONT_NONE}"
          ;;
       "execute1")
-         printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}$ ${2}${BR}"
+         printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}"
+         echo "$ ${2}"
          ;;
       "execute2")
          printSuccessOfExection "${2}" "${3}"
@@ -104,20 +106,22 @@ printSuccess() {
          printf "${FONT_GREEN}${successRemoveAll}${BR}${FONT_NONE}"
          ;;
       "remove_one")
-         printf "${FONT_GREEN}${successRemoveOne}${BR}${FONT_NONE}${2}${BR}"
+         printf "${FONT_GREEN}${successRemoveOne}${BR}${FONT_NONE}"
+         echo "${2}"
          ;;
       "backup")
          printf "${FONT_GREEN}${successBackup}${BR}${FONT_NONE}"
          ;;
       "import")
-         printf "${FONT_GREEN}${successImport}${BR}${FONT_NONE}${2}${BR}"
+         printf "${FONT_GREEN}${successImport}${BR}${FONT_NONE}"
+         echo "${2}"
          ;;
    esac
 }
 printSuccessOfExection() {
    printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}"
    local escaped=$(echo "${2}" | sed 's/\//\\\//g')
-   echo "${1}" | sed -e "s/{1}/${escaped}/g"
+   echo "$ ${1}" | sed -e "s/{1}/${escaped}/g"
 }
 printError() {
    case $1 in
@@ -128,7 +132,7 @@ printError() {
          printf "${BACKGROUND_RED}${errorNoMode}${BACKGROUND_DEFAULT}${BR}"
          ;;
       "add")
-         printf "${BACKGROUND_RED}${errorAdd}${BACKGROUND_DEFAULT}${BR}${paramAdd}${BR}"
+         printf "${BACKGROUND_RED}${errorAdd}${BACKGROUND_DEFAULT}${BR}"
          ;;
       "remove")
          printf "${BACKGROUND_RED}${errorRemove}${2} lines${BACKGROUND_DEFAULT}${BR}"
@@ -142,40 +146,43 @@ exitScript() {
 
 ### check input opts ###
 # [-a|-l|-e|-r|-b|-i|-h|-v]
-while getopts ":a:l:e:r:b:i:hv" arg ; do
+while getopts "a:l:e:r:b:i:hv" arg ; do
    case $arg in
       a)
-         paramAdd=${OPTARG}
+         paramAdd="${OPTARG}"
          ;;
       l)
-         paramList=${OPTARG}
+         paramList="${OPTARG}"
          ;;
       e)
          # check if there is another command after the linenumber
          if echo "${OPTARG}" | grep -q "," ; then
             paramExecute1=$(echo ${OPTARG} | cut -d ',' -f 1)
-						paramExecute2="${OPTARG:${#paramExecute1}+1:${#OPTARG}-1}"
+            paramExecute2="${OPTARG:${#paramExecute1}+1:${#OPTARG}-1}"
          else
-            paramExecute1=${OPTARG}
+            paramExecute1="${OPTARG}"
             paramExecute2="null"
          fi
          ;;
       r)
-         paramRemove=${OPTARG}
+         paramRemove="${OPTARG}"
          ;;
       b)
-         paramBackup=${OPTARG}
+         paramBackup="${OPTARG}"
          ;;
       i)
-         paramImport=${OPTARG}"/.cheatsheet"
+         paramImport="${OPTARG}/.cheatsheet"
          ;;
       v)
-         paramVersion="version"
+         printStartLinesOfCheatsheet
+         printVersionInfo
+         exitScript
          ;;
       h | *)
          printStartLinesOfCheatsheet
          printUsage
          exitScript
+         ;;
    esac
 done
 shift $((OPTIND -1))
@@ -203,10 +210,6 @@ isBackupMode() {
 }
 isImportMode() {
    if [ -n "${paramImport}" ] ; then return 0 ; fi
-   return 1
-}
-isVersionMode() {
-   if [ -n "${paramVersion}" ] ; then return 0 ; fi
    return 1
 }
 isFileExisting() {
@@ -292,7 +295,6 @@ executeTwoCommands() {
    exit 0
 }
 
-#######################
 ### start of script ###
 printStartLinesOfCheatsheet
 
@@ -393,11 +395,6 @@ elif isImportMode ; then
       fi
    done < "${paramImport}"
    printSuccess "import" "${i}"
-   exitScript
-
-### version mode
-elif isVersionMode ; then
-   printVersionInfo
    exitScript
 
 ### no mode
