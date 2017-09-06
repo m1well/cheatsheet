@@ -22,7 +22,7 @@ A tool where i can store all my recently used shell commands, list them,
 execute them, add new commands (append a comment if i want) and of course also delete them.
 </pre>
 So if i am looking e.g. for a command to enter a running docker container - i search in my stored commands:
-`$ script_cheatsheet.sh -l docker exec`
+`$ script_cheatsheet.sh -l 'docker exec'`
 and i get an answer of my stored output:<br>
 <pre>
 //-----------------------------//
@@ -30,6 +30,7 @@ and i get an answer of my stored output:<br>
 list of greped commands (with line number)
 01: docker exec -it {1} /bin/bash # enter running docker container
 //-----------------------------//</pre>
+
 
 ## Usage
 #### script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]
@@ -150,7 +151,8 @@ Thank you.<br>
 * [x] add a import function to import an existing cheatsheet (rows from an existing cheatsheet)<br>
 * [x] add posibility to make comments (and test it) and also search for them (e.g: 'git commit --amend # changes the last commit')<br>
 * [ ] improve the export/import to work with different lists<br>
-* [ ] add another script for "automated tests"<br>
+* [ ] add another script for "automated tests" (just to improve scripting skills)<br>
+
 
 ## P.S.
 The main reason for this project for me is just to learn more about the git/github behaviour, the versioning (like semver) and also to get some more scripting skills.<br>
