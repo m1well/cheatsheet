@@ -4,8 +4,8 @@
 #description            :This script is a cheatsheet for e.g. git or docker commands or whatever.
 #author                 :Michael Wellner (@m1well) twitter.m1well.de
 #date of creation       :20170824
-#date of last change    :20170903
-#version                :2.0.0
+#date of last change    :20170906
+#version                :2.1.0
 #usage                  :script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]
 #notes                  :it would be most suitable to create an alias
 ###
@@ -26,7 +26,7 @@ usageLine="//--- "
 usageDescription="//--- Store your commands to a cheatsheet and find & execute them easily"
 usageReadme="//--- Please checkout the README.md file!"
 usage1="//--- Usage: script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]"
-usage2="//---    -a add [param]          add a new command"
+usage2="//---    -a add [param]          add a new command (you can also append a comment after a # sign)"
 usage3="//---    -l list [param]         list your commands including this string - set param 'all' to list all commands"
 usage4="//---    -e execute [param]      execute a command by linenumber - it's possible to add another parameter with apostrophes after a comma"
 usage5="//---    -r remove [param]       remove a command by linenumber - set param 'all' to remove all commands"
@@ -35,9 +35,10 @@ usage7="//---    -i import [param]       import from a cheatsheet backup from a 
 usage8="//---    -h help                 show help"
 usage9="//---    -v version              show version"
 hint1="//--- Hint:"
-hint2="//--- Tt would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
-hint3="//--- -> so you can e.g. add a command with \"$ cheat -a 'git commit --amend'\""
-hint4="//--- Don't use a '-' at first character to search a command (becaus grep think it is a new option) and to add a command"
+hint2="//--- Actually backslashes in commands are not allowed!! (due to bad display of them)"
+hint3="//--- Don't use a '-' at first character to search a command! (becaus grep think it is a new option) and to add a command"
+hint4="//--- For a better usage it would be most suitable to create an alias like \"alias cheat=\"[path-to-script]/script_cheatsheet.sh\"\""
+hint5="//--- so that you can run the tool like this: \"$ cheat -l all\""
 successListAll="list of all commands (with line number)"
 successListGrep="list of greped commands (with line number)"
 successAdd="successfully added following command to the cheatsheet"
@@ -45,13 +46,13 @@ successRemoveOne="successfully removed following command from the cheatsheet"
 successRemoveAll="successfully removed all commands of the cheatsheet"
 successBackup="successfully created backup of the cheatsheet"
 successImport="successfully imported following amount of commands from the cheatsheet backup"
-successExecute="successfully executed the command: "
+successExecute="no executing following command (possible output below cheatsheet endline)"
 errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
 errorNoMode="error - no mode set"
-errorAdd="error - following command is already in the cheatsheet"
+errorAdd="error - this command exists already in the cheatsheet"
 errorRemove="error - this line is not available - cheatsheet has only "
-version1="version:                 2.0.0"
-version2="date of last change:     20170902"
+version1="version:                 2.1.0"
+version2="date of last change:     20170906"
 version3="author:                  Michael Wellner (@m1well)"
 
 ### file ###
@@ -72,7 +73,7 @@ printUsage() {
    printf "${usage1}${BR}${usage2}${BR}${usage3}${BR}${usage4}${BR}"
    printf "${usage5}${BR}${usage6}${BR}${usage7}${BR}"
    printf "${usageLine}${BR}"
-   printf "${hint1}${BR}${hint2}${BR}${hint3}${BR}${hint4}${BR}"
+   printf "${hint1}${BR}${hint2}${BR}${hint3}${BR}${hint4}${BR}${hint5}${BR}"
    printf "${usageLine}${BR}"
    printf "${FONT_NONE}"
 }
@@ -86,16 +87,18 @@ printVersionInfo() {
 printSuccess() {
    case $1 in
       "add")
-         printf "${FONT_GREEN}${successAdd}${BR}${FONT_NONE}${paramAdd}${BR}"
+         printf "${FONT_GREEN}${successAdd}${BR}${FONT_NONE}"
+         echo "${paramAdd}"
          ;;
       "list_all")
-         printf "${FONT_GREEN}${successListAll}${FONT_NONE}${BR}"
+         printf "${FONT_GREEN}${successListAll}${BR}${FONT_NONE}"
          ;;
       "list_grep")
          printf "${FONT_GREEN}${successListGrep}${BR}${FONT_NONE}"
          ;;
       "execute1")
-         printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}$ ${2}${BR}"
+         printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}"
+         echo "$ ${2}"
          ;;
       "execute2")
          printSuccessOfExection "${2}" "${3}"
@@ -104,20 +107,22 @@ printSuccess() {
          printf "${FONT_GREEN}${successRemoveAll}${BR}${FONT_NONE}"
          ;;
       "remove_one")
-         printf "${FONT_GREEN}${successRemoveOne}${BR}${FONT_NONE}${2}${BR}"
+         printf "${FONT_GREEN}${successRemoveOne}${BR}${FONT_NONE}"
+         echo "${2}"
          ;;
       "backup")
          printf "${FONT_GREEN}${successBackup}${BR}${FONT_NONE}"
          ;;
       "import")
-         printf "${FONT_GREEN}${successImport}${BR}${FONT_NONE}${2}${BR}"
+         printf "${FONT_GREEN}${successImport}${BR}${FONT_NONE}"
+         echo "${2}"
          ;;
    esac
 }
 printSuccessOfExection() {
    printf "${FONT_GREEN}${successExecute}${BR}${FONT_NONE}"
    local escaped=$(echo "${2}" | sed 's/\//\\\//g')
-   echo "${1}" | sed -e "s/{1}/${escaped}/g"
+   echo "$ ${1}" | sed -e "s/{1}/${escaped}/g"
 }
 printError() {
    case $1 in
@@ -128,7 +133,7 @@ printError() {
          printf "${BACKGROUND_RED}${errorNoMode}${BACKGROUND_DEFAULT}${BR}"
          ;;
       "add")
-         printf "${BACKGROUND_RED}${errorAdd}${BACKGROUND_DEFAULT}${BR}${paramAdd}${BR}"
+         printf "${BACKGROUND_RED}${errorAdd}${BACKGROUND_DEFAULT}${BR}"
          ;;
       "remove")
          printf "${BACKGROUND_RED}${errorRemove}${2} lines${BACKGROUND_DEFAULT}${BR}"
@@ -142,40 +147,43 @@ exitScript() {
 
 ### check input opts ###
 # [-a|-l|-e|-r|-b|-i|-h|-v]
-while getopts ":a:l:e:r:b:i:hv" arg ; do
+while getopts "a:l:e:r:b:i:hv" arg ; do
    case $arg in
       a)
-         paramAdd=${OPTARG}
+         paramAdd="${OPTARG}"
          ;;
       l)
-         paramList=${OPTARG}
+         paramList="${OPTARG}"
          ;;
       e)
          # check if there is another command after the linenumber
          if echo "${OPTARG}" | grep -q "," ; then
             paramExecute1=$(echo ${OPTARG} | cut -d ',' -f 1)
-						paramExecute2="${OPTARG:${#paramExecute1}+1:${#OPTARG}-1}"
+            paramExecute2="${OPTARG:${#paramExecute1}+1:${#OPTARG}-1}"
          else
-            paramExecute1=${OPTARG}
+            paramExecute1="${OPTARG}"
             paramExecute2="null"
          fi
          ;;
       r)
-         paramRemove=${OPTARG}
+         paramRemove="${OPTARG}"
          ;;
       b)
-         paramBackup=${OPTARG}
+         paramBackup="${OPTARG}"
          ;;
       i)
-         paramImport=${OPTARG}"/.cheatsheet"
+         paramImport="${OPTARG}/.cheatsheet"
          ;;
       v)
-         paramVersion="version"
+         printStartLinesOfCheatsheet
+         printVersionInfo
+         exitScript
          ;;
       h | *)
          printStartLinesOfCheatsheet
          printUsage
          exitScript
+         ;;
    esac
 done
 shift $((OPTIND -1))
@@ -203,10 +211,6 @@ isBackupMode() {
 }
 isImportMode() {
    if [ -n "${paramImport}" ] ; then return 0 ; fi
-   return 1
-}
-isVersionMode() {
-   if [ -n "${paramVersion}" ] ; then return 0 ; fi
    return 1
 }
 isFileExisting() {
@@ -245,7 +249,7 @@ printGreppedList() {
    local number=""
    local command=""
    # grep complete list and itereate over this list
-   grep -n --color=always "${1}" "${2}" | while read -r greppedList ; do
+   grep -n "${1}" "${2}" | while read -r greppedList ; do
       for ln in "${greppedList}" ; do
          # split the line to number and command
          number=$(echo ${ln} | cut -d ':' -f 1)
@@ -254,30 +258,18 @@ printGreppedList() {
          else
             command="${ln:3:${#ln}-1}"
          fi
-         printWithFormattedLineNumbers "${number}" "${command}"
+         printf '%02d: %s\n' $number "${command}"
       done
    done
 }
 printCompleteList() {
    local counter=0
    while read -r completeList ; do
-      for ln in "${completeList}" ; do
+      for completeLine in "${completeList}" ; do
          ((counter++))
-         printWithFormattedLineNumbers "${counter}" "${ln}"
+         printf '%02d: %s\n' $counter "${completeLine}"
       done
    done < "${1}"
-}
-printWithFormattedLineNumbers() {
-   local number=""
-   local command="${2}"
-   # if number smaller then 10 - add a leading zero
-   if (( ${1} < 10 )) ; then
-      number="0${1}"
-   else
-      number="${1}"
-   fi
-   # print out the formatted lines
-   echo "${number}:  ${command}"
 }
 executeOneCommand() {
    printf "${FONT_CYAN}${line}${BR}${FONT_NONE}"
@@ -292,7 +284,6 @@ executeTwoCommands() {
    exit 0
 }
 
-#######################
 ### start of script ###
 printStartLinesOfCheatsheet
 
@@ -393,11 +384,6 @@ elif isImportMode ; then
       fi
    done < "${paramImport}"
    printSuccess "import" "${i}"
-   exitScript
-
-### version mode
-elif isVersionMode ; then
-   printVersionInfo
    exitScript
 
 ### no mode

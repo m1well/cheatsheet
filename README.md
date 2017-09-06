@@ -19,16 +19,16 @@ So therefore i was thinking about to combine these functions into one tool.<br>
 ## Solution
 <pre>
 A tool where i can store all my recently used shell commands, list them,
-execute them, add new commands and of course also delete them.
+execute them, add new commands (append a comment if i want) and of course also delete them.
 </pre>
-So if i am looking e.g. for a command to stop all docker container i search in my stored commands:
-`$ script_cheatsheet.sh -l docker stop`
+So if i am looking e.g. for a command to enter a running docker container - i search in my stored commands:
+`$ script_cheatsheet.sh -l docker exec`
 and i get an answer of my stored output:<br>
 <pre>
 //-----------------------------//
 //-------- cheatsheet  --------//
 list of greped commands (with line number)
-01: docker stop $(docker ps -a -q)
+01: docker exec -it {1} /bin/bash # enter running docker container
 //-----------------------------//</pre>
 
 ## Usage
@@ -38,9 +38,9 @@ lets say we actually have following cheatsheet (the commands are simple just to 
 //-----------------------------//
 //-------- cheatsheet  --------//
 list of all commands (with line number)
-01:  git add .
-02:  git commit -m "{1}"
-03:  git push origin --force-with-lease
+01:  git add . # add all untracked files
+02:  git commit -m "{1}" # commit with a given message
+03:  git push origin --force-with-lease # push origin force-with-lease
 //-----------------------------//</pre>
 
 #### You can just run the script and...<br>
@@ -49,9 +49,9 @@ list of all commands (with line number)
 `$ script_cheatsheet.sh -a 'git status'`<br>
 the result would be the same list as above with an additional line for `git status`:<br>
 <pre>
-01:  git add .
-02:  git commit -m "{1}"
-03:  git push origin --force-with-lease
+01:  git add . # add all untracked files
+02:  git commit -m "{1}" # commit with a given message
+03:  git push origin --force-with-lease # push origin force-with-lease
 04:  git status
 </pre>
 
@@ -66,7 +66,7 @@ result would be:<br>
 //-----------------------------//
 //-------- cheatsheet  --------//
 list of greped commands (with line number)
-02:  git commit -m "{1}"
+02:  git commit -m "{1}" # commit with a given message
 //-----------------------------//
 </pre>
 
@@ -78,12 +78,12 @@ The fourth command `git status` is going to be executed (and shows the status of
 `$ script_cheatsheet.sh -e 2,'this is a message for my commit'`<br>
 Then the third command `git commit -m "{1}"` is going to be executed.<br>
 Here the additional parameter enables you to put an individual message to the commit.<br>
-The result would be the following lines (with the additional output of the execution)<br>
+The result would be the following lines (with the possible output of the execution)<br>
 <pre>
 //-----------------------------//
 //-------- cheatsheet  --------//
-successfully executed the command:
-git commit -m "this is a message for my commit"
+now executing following command (possible output below cheatsheet endline)
+$ git commit -m "{1}" # commit with a given message
 //-----------------------------//
 [execution-function 31abc5b] this is a message for my commit
  2 files changed, 15 insertions(+), 15 deletions(-)
@@ -96,7 +96,7 @@ the result would be following:<br>
 //-----------------------------//
 //-------- cheatsheet  --------//
 successfully removed following command from the cheatsheet
-git add .
+git add . # add all untracked files
 //-----------------------------//
 </pre>
 
@@ -127,6 +127,8 @@ For windows i take the gitBash shell to use the cheatsheet<br>
 
 
 ## Hint
+Actually backslashes in commands are not allowed!! (due to bad display of them)<br>
+Don't use a '-' at first character to search a command! (becaus grep think it is a new option) and to add a command.<br>
 For a better usage it would be most suitable to create an alias like<br>
 `alias cheat="[path-to-script]/script_cheatsheet.sh"`<br>
 so that you can run the tool like this:<br>
@@ -142,14 +144,13 @@ Thank you.<br>
 
 
 ## TODO
-* add release branch :heavy_check_mark:<br>
-* add posibility to execute commands :heavy_check_mark:<br>
-* add a backup function for the cheatsheet :heavy_check_mark:<br>
-* add a import function to import an existing cheatsheet (rows from an existing cheatsheet) :heavy_check_mark:<br>
-* improve the export/import to work with different lists<br>
-* add another script for "automated tests"<br>
-* add posibility to make comments and also search for them (e.g: 'git commit --amend // changes the last commit')<br>
-
+* [x] add release branch<br>
+* [x] add posibility to execute commands<br>
+* [x] add a backup function for the cheatsheet<br>
+* [x] add a import function to import an existing cheatsheet (rows from an existing cheatsheet)<br>
+* [x] add posibility to make comments (and test it) and also search for them (e.g: 'git commit --amend # changes the last commit')<br>
+* [ ] improve the export/import to work with different lists<br>
+* [ ] add another script for "automated tests"<br>
 
 ## P.S.
 The main reason for this project for me is just to learn more about the git/github behaviour, the versioning (like semver) and also to get some more scripting skills.<br>
