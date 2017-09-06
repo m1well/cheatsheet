@@ -144,13 +144,13 @@ Thank you.<br>
 
 
 ## TODO
-* add release branch :heavy_check_mark:<br>
-* add posibility to execute commands :heavy_check_mark:<br>
-* add a backup function for the cheatsheet :heavy_check_mark:<br>
-* add a import function to import an existing cheatsheet (rows from an existing cheatsheet) :heavy_check_mark:<br>
-* improve the export/import to work with different lists<br>
-* add another script for "automated tests"<br>
-* add posibility to make comments and also search for them (e.g: 'git commit --amend // changes the last commit')<br>
+* [x] add release branch<br>
+* [x] add posibility to execute commands<br>
+* [x] add a backup function for the cheatsheet<br>
+* [x] add a import function to import an existing cheatsheet (rows from an existing cheatsheet)<br>
+* [ ] improve the export/import to work with different lists<br>
+* [ ] add another script for "automated tests"<br>
+* [ ] add posibility to make comments and also search for them (e.g: 'git commit --amend // changes the last commit')<br>
 
 
 ## P.S.

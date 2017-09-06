@@ -4,7 +4,7 @@
 #description            :This script is a cheatsheet for e.g. git or docker commands or whatever.
 #author                 :Michael Wellner (@m1well) twitter.m1well.de
 #date of creation       :20170824
-#date of last change    :20170905
+#date of last change    :20170906
 #version                :2.0.1
 #usage                  :script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]
 #notes                  :it would be most suitable to create an alias
@@ -52,7 +52,7 @@ errorNoMode="error - no mode set"
 errorAdd="error - this command exists already in the cheatsheet"
 errorRemove="error - this line is not available - cheatsheet has only "
 version1="version:                 2.0.1"
-version2="date of last change:     20170905"
+version2="date of last change:     20170906"
 version3="author:                  Michael Wellner (@m1well)"
 
 ### file ###
@@ -249,7 +249,7 @@ printGreppedList() {
    local number=""
    local command=""
    # grep complete list and itereate over this list
-   grep -n --color=always "${1}" "${2}" | while read -r greppedList ; do
+   grep -n "${1}" "${2}" | while read -r greppedList ; do
       for ln in "${greppedList}" ; do
          # split the line to number and command
          number=$(echo ${ln} | cut -d ':' -f 1)
@@ -258,30 +258,18 @@ printGreppedList() {
          else
             command="${ln:3:${#ln}-1}"
          fi
-         printWithFormattedLineNumbers "${number}" "${command}"
+         printf '%02d: %s\n' $number "${command}"
       done
    done
 }
 printCompleteList() {
    local counter=0
    while read -r completeList ; do
-      for ln in "${completeList}" ; do
+      for completeLine in "${completeList}" ; do
          ((counter++))
-         printWithFormattedLineNumbers "${counter}" "${ln}"
+         printf '%02d: %s\n' $counter "${completeLine}"
       done
    done < "${1}"
-}
-printWithFormattedLineNumbers() {
-   local number=""
-   local command="${2}"
-   # if number smaller then 10 - add a leading zero
-   if (( ${1} < 10 )) ; then
-      number="0${1}"
-   else
-      number="${1}"
-   fi
-   # print out the formatted lines
-   echo "${number}:  ${command}"
 }
 executeOneCommand() {
    printf "${FONT_CYAN}${line}${BR}${FONT_NONE}"
