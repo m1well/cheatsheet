@@ -5,7 +5,7 @@
 #author                 :Michael Wellner (@m1well) twitter.m1well.de
 #date of creation       :20170824
 #date of last change    :20170906
-#version                :2.0.1
+#version                :2.1.0
 #usage                  :script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]
 #notes                  :it would be most suitable to create an alias
 ###
@@ -26,7 +26,7 @@ usageLine="//--- "
 usageDescription="//--- Store your commands to a cheatsheet and find & execute them easily"
 usageReadme="//--- Please checkout the README.md file!"
 usage1="//--- Usage: script_cheatsheet.sh [-a|-l|-e|-r|-b|-i|-h|-v]"
-usage2="//---    -a add [param]          add a new command"
+usage2="//---    -a add [param]          add a new command (you can also append a comment after a # sign)"
 usage3="//---    -l list [param]         list your commands including this string - set param 'all' to list all commands"
 usage4="//---    -e execute [param]      execute a command by linenumber - it's possible to add another parameter with apostrophes after a comma"
 usage5="//---    -r remove [param]       remove a command by linenumber - set param 'all' to remove all commands"
@@ -46,12 +46,12 @@ successRemoveOne="successfully removed following command from the cheatsheet"
 successRemoveAll="successfully removed all commands of the cheatsheet"
 successBackup="successfully created backup of the cheatsheet"
 successImport="successfully imported following amount of commands from the cheatsheet backup"
-successExecute="successfully executed the command"
+successExecute="no executing following command (possible output below cheatsheet endline)"
 errorNoFile="error - no cheatsheet file available -> you have to add a first command to create the file"
 errorNoMode="error - no mode set"
 errorAdd="error - this command exists already in the cheatsheet"
 errorRemove="error - this line is not available - cheatsheet has only "
-version1="version:                 2.0.1"
+version1="version:                 2.1.0"
 version2="date of last change:     20170906"
 version3="author:                  Michael Wellner (@m1well)"
 
