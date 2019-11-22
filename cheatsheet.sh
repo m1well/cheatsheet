@@ -190,7 +190,7 @@ printGreppedList() {
       else
         command="${ln:3:${#ln}-1}"
       fi
-      printf '%02d: %s\n' $number "${command}"
+      printf '%02d:  %s\n' $number "${command}"
     done
   done
 }
@@ -198,7 +198,7 @@ printCompleteList() {
   local counter=0
   while read -r completeList ; do
     for completeLine in "${completeList}" ; do
-      ((counter++))
+      counter=$((counter+1))
       printf '%02d: %s\n' $counter "${completeLine}"
     done
   done < "${1}"
